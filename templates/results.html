@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ query }} - Spectre Search</title>
+    <title>{{ query }} - Spectre AI Search</title>
     <style>
         body {
             background-color: #0d0f12;
@@ -40,6 +40,34 @@
             max-width: 750px;
             margin-left: 20px;
         }
+        /* Spectre AI Overview Dashboard Box Styling */
+        .ai-card {
+            background: linear-gradient(135deg, #131924 0%, #11141a 100%);
+            border: 1px solid rgba(0, 173, 181, 0.25);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .ai-badge {
+            display: inline-block;
+            background-color: #00adb5;
+            color: #0d0f12;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .ai-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #f1f2f6;
+            margin: 0;
+        }
+        /* Web Search Results Styling */
         .result-item {
             margin-bottom: 28px;
             background-color: #13161c;
@@ -80,6 +108,13 @@
     </div>
 
     <div class="result-container">
+        {% if ai_overview %}
+            <div class="ai-card">
+                <span class="ai-badge">Spectre AI Overview</span>
+                <p class="ai-text">{{ ai_overview }}</p>
+            </div>
+        {% endif %}
+
         {% if search_results %}
             {% for item in search_results %}
                 <div class="result-item">
