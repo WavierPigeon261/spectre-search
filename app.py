@@ -1,5 +1,6 @@
 import sys
-from flask import Flask, render_template, request
+import os
+from flask import Flask, render_template, request, send_from_directory
 import requests
 from bs4 import BeautifulSoup
 
@@ -10,12 +11,7 @@ HEADERS = {
 }
 
 def fetch_ai_summary(query):
-    """
-    Connects to a fast, open-source inference router to get an instant,
-    anonymous text response without requiring private developer API keys.
-    """
     try:
-        # Using an anonymous text generation endpoint for quick search summaries
         url = "https://ai4free.api.devsdocode.in/api/blackbox"
         payload = {
             "prompt": f"Provide a concise, direct, 2-3 sentence summary answering this search query: {query}. Do not say 'Here is your summary'. Start directly.",
@@ -38,10 +34,8 @@ def search():
     if not query:
         return render_template("index.html")
 
-    # 1. Fetch the AI overview in the background
     ai_overview = fetch_ai_summary(query)
 
-    # 2. Fetch standard private search engine index results
     ddg_url = "https://html.duckduckgo.com/html/"
     payload = {'q': query}
     search_results = []
@@ -64,13 +58,19 @@ def search():
     except Exception as e:
         print(f"Search index connection error: {e}", file=sys.stderr)
 
-    # Pass both the AI text and the links directly to your layout template
     return render_template(
         "results.html", 
         query=query, 
         search_results=search_results, 
         ai_overview=ai_overview
     )
+
+# THE FIX: This custom route forces Flask to serve the image out of the templates folder securely
+@app.route('/templates/backgrounds/<path:filename>')
+def serve_background(filename):
+    # Points directly to your templates/backgrounds/ directory
+    backgrounds_dir = os.path.join(app.root_path, 'templates', 'backgrounds')
+    return send_from_directory(backgrounds_dir, filename)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
