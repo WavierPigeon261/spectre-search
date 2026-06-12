@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectre - Private Search Engine</title>
+    <style>
+        body {
+            background-color: #0d0f12;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #00adb5;
+            letter-spacing: 4px;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(0, 173, 181, 0.3);
+        }
+        form {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 15px;
+            border: 2px solid #1f232a;
+            border-radius: 8px 0 0 8px;
+            background-color: #161a22;
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus {
+            border-color: #00adb5;
+        }
+        button {
+            width: 20%;
+            padding: 15px;
+            border: none;
+            background-color: #00adb5;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #007a80;
+        }
+        .tagline {
+            color: #5c697a;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>SPECTRE</h1>
+    <form action="/search" method="GET">
+        <input type="text" name="q" placeholder="Search the web trace-free..." autocomplete="off" required>
+        <button type="submit">Go</button>
+    </form>
+    <div class="tagline">ZERO COOKIES • ZERO TRACKERS • PRIVATE RELAY</div>
+
+</body>
+</html>

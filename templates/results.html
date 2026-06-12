@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ query }} - Spectre Search</title>
+    <style>
+        body {
+            background-color: #0d0f12;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #1f232a;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .logo {
+            color: #00adb5;
+            text-decoration: none;
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-right: 25px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 173, 181, 0.2);
+        }
+        .query-title {
+            margin: 0;
+            font-weight: 400;
+            color: #8c9ba5;
+        }
+        .query-title i {
+            color: #fff;
+        }
+        .result-container {
+            max-width: 750px;
+            margin-left: 20px;
+        }
+        .result-item {
+            margin-bottom: 28px;
+            background-color: #13161c;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #1c212b;
+        }
+        .result-title {
+            font-size: 1.25rem;
+            color: #74b9ff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .result-title:hover {
+            text-decoration: underline;
+        }
+        .result-url {
+            color: #00adb5;
+            font-size: 0.85rem;
+            display: block;
+            margin-top: 4px;
+            word-break: break-all;
+            opacity: 0.8;
+        }
+        .result-snippet {
+            color: #b2bec3;
+            margin-top: 8px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="/" class="logo">SPECTRE</a>
+        <h3 class="query-title">Results for: <i>{{ query }}</i></h3>
+    </div>
+
+    <div class="result-container">
+        {% if search_results %}
+            {% for item in search_results %}
+                <div class="result-item">
+                    <a class="result-title" href="{{ item.link }}" target="_blank">{{ item.title }}</a>
+                    <span class="result-url">{{ item.link }}</span>
+                    <div class="result-snippet">{{ item.snippet }}</div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No clean privacy results could be generated for this query.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>
