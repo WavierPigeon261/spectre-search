@@ -6,7 +6,10 @@
     <title>Spectre - Private Search Engine</title>
     <style>
         body {
-            background-color: #0d0f12;
+            /* Loads your background image using the templates context path */
+            background: linear-gradient(rgba(13, 15, 18, 0.85), rgba(13, 15, 18, 0.85)), 
+                        url('/templates/backgrounds/image.png') no-repeat center center fixed;
+            background-size: cover;
             color: #e0e0e0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
@@ -22,19 +25,20 @@
             color: #00adb5;
             letter-spacing: 4px;
             font-weight: 700;
-            text-shadow: 0 0 10px rgba(0, 173, 181, 0.3);
+            text-shadow: 0 0 15px rgba(0, 173, 181, 0.6);
         }
         form {
             width: 100%;
             max-width: 600px;
             display: flex;
+            backdrop-filter: blur(4px); /* Sleek glassmorphism behind the input bar */
         }
         input[type="text"] {
             width: 80%;
             padding: 15px;
             border: 2px solid #1f232a;
             border-radius: 8px 0 0 8px;
-            background-color: #161a22;
+            background-color: rgba(22, 26, 34, 0.9);
             color: #fff;
             font-size: 1.1rem;
             outline: none;
@@ -59,10 +63,12 @@
             background-color: #007a80;
         }
         .tagline {
-            color: #5c697a;
+            color: #a0aec0;
             font-size: 0.9rem;
             margin-top: 15px;
             letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+            font-weight: 500;
         }
     </style>
 </head>
