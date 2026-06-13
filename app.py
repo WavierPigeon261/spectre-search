@@ -12,12 +12,25 @@ client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 def generate_rag_summary(query, web_snippets):
-    if not web_snippets: return "No context available."
-    context = "\n".join([f"- {s}" for s in web_snippets[:3]])
+    # If snippets are thin, we guide the AI to use its internal training data
+    context = "\n".join([f"- {s}" for s in web_snippets[:4]]) if web_snippets else "No specific web context found."
+    
+    system_prompt = (
+        f"You are Spectre AI. Provide a comprehensive, detailed, and highly informative "
+        f"response to the query: '{query}'.\n\n"
+        f"Use the following web context if available, but if the context is thin or missing, "
+        f"use your deep internal knowledge to provide a thorough explanation:\n{context}\n\n"
+        f"Rules: Structure your response with clear, detailed paragraphs. "
+        f"Be comprehensive. If the user asks about an acronym or a concept, "
+        f"break it down fully."
+    )
     
     try:
         chat_completion = client.chat.completions.create(
-            messages=[{"role": "user", "content": f"Query: {query}\nContext: {context}\nSummarize in 3 sentences."}],
+            messages=[
+                {"role": "system", "content": "You are a helpful and detailed search assistant."},
+                {"role": "user", "content": system_prompt}
+            ],
             model="llama-3.3-70b-versatile",
         )
         return chat_completion.choices[0].message.content
@@ -30,7 +43,7 @@ def home():
 
 @app.route("/search")
 def search():
-    query = request.args.get("q")
+    query = request.args.get("q", "").strip()
     if not query: return render_template("index.html")
     
     ddg_url = "https://html.duckduckgo.com/html/"
@@ -45,7 +58,7 @@ def search():
         if title:
             s_text = snip.text.strip() if snip else ""
             search_results.append({"title": title.text.strip(), "link": title["href"], "snippet": s_text})
-            snippets.append(s_text)
+            if s_text: snippets.append(s_text)
             
     ai_overview = generate_rag_summary(query, snippets)
     return render_template("results.html", query=query, search_results=search_results, ai_overview=ai_overview)
