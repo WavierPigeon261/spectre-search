@@ -16,19 +16,18 @@ def generate_rag_summary(query, web_snippets):
     context = "\n".join([f"- {s}" for s in web_snippets[:4]]) if web_snippets else "No specific web context found."
     
     system_prompt = (
-        f"You are Spectre AI. Provide a comprehensive, detailed, and highly informative "
-        f"response to the query: '{query}'.\n\n"
-        f"Use the following web context if available, but if the context is thin or missing, "
-        f"use your deep internal knowledge to provide a thorough explanation:\n{context}\n\n"
-        f"Rules: Structure your response with clear, detailed paragraphs. "
-        f"Be comprehensive. If the user asks about an acronym or a concept, "
-        f"break it down fully."
+        f"You are Spectre AI. Provide a precise, high-quality answer to: '{query}'.\n\n"
+        f"Context provided:\n{context}\n\n"
+        f"Rules:\n"
+        f"1. Start with a single, concise paragraph of exactly 6 lines or fewer.\n"
+        f"2. If applicable, provide 4 to 5 bullet points below the paragraph for key details.\n"
+        f"3. Keep the content extremely precise, professional, and directly relevant."
     )
     
     try:
         chat_completion = client.chat.completions.create(
             messages=[
-                {"role": "system", "content": "You are a helpful and detailed search assistant."},
+                {"role": "system", "content": "You are a concise, high-precision search assistant."},
                 {"role": "user", "content": system_prompt}
             ],
             model="llama-3.3-70b-versatile",
