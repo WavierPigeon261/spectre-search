@@ -40,6 +40,12 @@ def generate_rag_summary(query, web_snippets):
 def home():
     return render_template("index.html")
 
+@app.route("/health")
+def health_check():
+    # This route returns immediately. 
+    # It does not run search, scraping, or AI API calls.
+    return "OK", 200
+
 @app.route("/search")
 def search():
     query = request.args.get("q", "").strip()
