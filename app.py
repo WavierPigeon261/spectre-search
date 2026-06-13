@@ -40,6 +40,18 @@ def generate_rag_summary(query, web_snippets):
 def home():
     return render_template("index.html")
 
+@app.route('/status', methods=['GET'])
+def system_status():
+    """
+    Returns the network infrastructure operational status.
+    Used by the landing page to verify backend availability.
+    """
+    return jsonify({
+        "status": "operational",
+        "message": "Spectre core backend network is fully functional",
+        "version": "1.0.0"
+    }), 200
+
 @app.route("/health")
 def health_check():
     # This route returns immediately. 
