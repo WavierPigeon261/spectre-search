@@ -6,7 +6,8 @@ from bs4 import BeautifulSoup
 from groq import Groq
 
 app = Flask(__name__)
-# REPLACE THIS WITH YOUR KEY
+
+# Ensure the key is pulled from your environment variables
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
@@ -23,9 +24,15 @@ def generate_rag_summary(query, web_snippets):
     except Exception as e:
         return f"AI Error: {str(e)}"
 
+@app.route("/")
+def home():
+    return render_template("index.html")
+
 @app.route("/search")
 def search():
     query = request.args.get("q")
+    if not query: return render_template("index.html")
+    
     ddg_url = "https://html.duckduckgo.com/html/"
     response = requests.post(ddg_url, data={'q': query}, headers=HEADERS)
     soup = BeautifulSoup(response.text, "html.parser")
@@ -43,4 +50,9 @@ def search():
     ai_overview = generate_rag_summary(query, snippets)
     return render_template("results.html", query=query, search_results=search_results, ai_overview=ai_overview)
 
-# ... (keep your home and background routes)
+@app.route('/templates/backgrounds/<path:filename>')
+def serve_background(filename):
+    return send_from_directory(os.path.join(app.root_path, 'templates', 'backgrounds'), filename)
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
