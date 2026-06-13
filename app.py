@@ -7,8 +7,7 @@ from groq import Groq
 
 app = Flask(__name__)
 # REPLACE THIS WITH YOUR KEY
-client = Groq(api_key="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")
-
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 def generate_rag_summary(query, web_snippets):
