@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ query }} - Spectre AI Search</title>
+    <title>{{ query }} - Spectre AI Overview</title>
     <style>
         body {
             background-color: #0d0f12;
@@ -40,40 +40,59 @@
             max-width: 750px;
             margin-left: 20px;
         }
-        /* Spectre AI Overview Dashboard Box Styling */
+        /* Google-Style Live AI Overview Container */
         .ai-card {
-            background: linear-gradient(135deg, #131924 0%, #11141a 100%);
-            border: 1px solid rgba(0, 173, 181, 0.25);
-            border-radius: 8px;
-            padding: 20px;
+            background: linear-gradient(145deg, #151d2a 0%, #0f131a 100%);
+            border-left: 4px solid #00adb5;
+            border-top: 1px solid rgba(0, 173, 181, 0.2);
+            border-right: 1px solid rgba(0, 173, 181, 0.2);
+            border-bottom: 1px solid rgba(0, 173, 181, 0.2);
+            border-radius: 0 8px 8px 0;
+            padding: 22px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        .ai-header-wrapper {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
         }
         .ai-badge {
-            display: inline-block;
-            background-color: #00adb5;
-            color: #0d0f12;
+            background-color: rgba(0, 173, 181, 0.15);
+            color: #00adb5;
             font-size: 0.75rem;
             font-weight: bold;
-            padding: 3px 8px;
-            border-radius: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
+            letter-spacing: 1.5px;
+            border: 1px solid rgba(0, 173, 181, 0.3);
+        }
+        .ai-context-indicator {
+            color: #5c697a;
+            font-size: 0.8rem;
+            margin-left: 12px;
+            font-style: italic;
         }
         .ai-text {
-            font-size: 1.05rem;
-            line-height: 1.6;
+            font-size: 1.08rem;
+            line-height: 1.65;
             color: #f1f2f6;
             margin: 0;
+            font-weight: 400;
         }
-        /* Web Search Results Styling */
+        /* Web Search Index Cards */
         .result-item {
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             background-color: #13161c;
-            padding: 15px;
-            border-radius: 6px;
+            padding: 18px;
+            border-radius: 8px;
             border: 1px solid #1c212b;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .result-item:hover {
+            border-color: #242b38;
+            transform: translateY(-1px);
         }
         .result-title {
             font-size: 1.25rem;
@@ -88,15 +107,15 @@
             color: #00adb5;
             font-size: 0.85rem;
             display: block;
-            margin-top: 4px;
+            margin-top: 5px;
             word-break: break-all;
-            opacity: 0.8;
+            opacity: 0.75;
         }
         .result-snippet {
             color: #b2bec3;
-            margin-top: 8px;
+            margin-top: 10px;
             font-size: 0.95rem;
-            line-height: 1.5;
+            line-height: 1.55;
         }
     </style>
 </head>
@@ -108,13 +127,18 @@
     </div>
 
     <div class="result-container">
+        <!-- Google-Style RAG Summary Block -->
         {% if ai_overview %}
             <div class="ai-card">
-                <span class="ai-badge">Spectre AI Overview</span>
+                <div class="ai-header-wrapper">
+                    <span class="ai-badge">Spectre AI Overview</span>
+                    <span class="ai-context-indicator">• Synthesized from live search streams</span>
+                </div>
                 <p class="ai-text">{{ ai_overview }}</p>
             </div>
         {% endif %}
 
+        <!-- Traditional Search Engine Result Lists -->
         {% if search_results %}
             {% for item in search_results %}
                 <div class="result-item">
@@ -124,7 +148,7 @@
                 </div>
             {% endfor %}
         {% else %}
-            <p>No clean privacy results could be generated for this query.</p>
+            <p>No clean privacy links could be pulled for this specific query phrase.</p>
         {% endif %}
     </div>
 
