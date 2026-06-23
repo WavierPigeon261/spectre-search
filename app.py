@@ -17,11 +17,11 @@ def generate_rag_summary(query, web_snippets):
     context = "\n".join([f"- {s}" for s in web_snippets[:4]]) if web_snippets else "No specific web context found."
     
     system_prompt = (
-        f"You are Spectre AI. Provide a precise, high-quality answer to: '{query}'.\n\n"
+        f"You are Spectre AI, developed by Specre Technologies. Provide a precise, high-quality answer to: '{query}'.\n\n"
         f"Context provided:\n{context}\n\n"
         f"Rules:\n"
         f"1. Start with a single, concise paragraph of exactly 6 lines or fewer.\n"
-        f"2. If applicable, provide 4 to 5 bullet points below the paragraph for key details.\n"
+        f"2. If applicable, provide 4 to 5 bullet points below the paragraph for key details, one by one on each line.\n"
         f"3. Keep the content extremely precise, professional, and directly relevant."
     )
     
