@@ -12,9 +12,12 @@
             margin: 0;
             padding: 20px;
         }
+        
+        /* Centered Navigation Header Layout */
         .header {
             display: flex;
             align-items: center;
+            justify-content: flex-start;
             border-bottom: 1px solid #1f232a;
             padding-bottom: 15px;
             margin-bottom: 20px;
@@ -28,18 +31,53 @@
             letter-spacing: 2px;
             text-shadow: 0 0 10px rgba(0, 173, 181, 0.2);
         }
-        .query-title {
-            margin: 0;
-            font-weight: 400;
-            color: #8c9ba5;
+        .top-search-form {
+            display: flex;
+            align-items: center;
+            background-color: #131722;
+            border: 1px solid #242b38;
+            border-radius: 24px;
+            padding: 2px 14px;
+            width: 100%;
+            max-width: 550px;
+            margin-left: 10px;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .query-title i {
-            color: #fff;
+        .top-search-form:focus-within {
+            border-color: #00adb5;
+            box-shadow: 0 0 8px rgba(0, 173, 181, 0.3);
         }
+        .top-search-input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 0.95rem;
+            padding: 8px;
+            outline: none;
+        }
+        .top-search-input::placeholder {
+            color: #5c697a;
+        }
+        .top-search-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s;
+        }
+        .top-search-btn:hover {
+            transform: scale(1.1);
+        }
+
         .result-container {
             max-width: 750px;
             margin-left: 20px;
         }
+        
         /* Google-Style Live AI Overview Container */
         .ai-card {
             background: linear-gradient(145deg, #151d2a 0%, #0f131a 100%);
@@ -56,6 +94,8 @@
             display: flex;
             align-items: center;
             margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 10px;
         }
         .ai-badge {
             background-color: rgba(0, 173, 181, 0.15);
@@ -74,13 +114,128 @@
             margin-left: 12px;
             font-style: italic;
         }
+        
+        /* Conversational Threads Layout Engine */
+        .chat-thread-container {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-bubble {
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        
+        /* Right-aligned layout container for User Queries */
+        .user-bubble-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .bubble-label {
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .label-user { color: #74b9ff; }
+        .label-spectre { color: #00adb5; }
+        
         .ai-text {
             font-size: 1.08rem;
             line-height: 1.65;
             color: #f1f2f6;
             margin: 0;
             font-weight: 400;
+            white-space: pre-line;
         }
+        
+        /* Distinct modern background design box for User Prompts */
+        .user-text-bg {
+            background-color: #1c2331;
+            padding: 10px 14px;
+            border-radius: 8px 8px 0 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        /* Interactive Follow-Up Input Architecture */
+        .followup-wrapper {
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 15px;
+        }
+        .followup-form {
+            display: flex;
+            align-items: center;
+            background-color: #131722;
+            border: 1px solid #242b38;
+            border-radius: 24px;
+            padding: 4px 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .followup-form:focus-within {
+            border-color: #00adb5;
+            box-shadow: 0 0 8px rgba(0, 173, 181, 0.3);
+        }
+        .followup-input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1rem;
+            padding: 10px;
+            outline: none;
+        }
+        .followup-input::placeholder {
+            color: #5c697a;
+        }
+        .followup-btn {
+            background-color: #00adb5;
+            color: #0d0f12;
+            border: none;
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .followup-btn:hover {
+            transform: scale(1.05);
+            background-color: #00f2fe;
+        }
+        .ai-loading-indicator {
+            display: none;
+            color: #00adb5;
+            font-size: 0.9rem;
+            font-style: italic;
+            margin-top: 10px;
+            align-items: center;
+        }
+        .spinner {
+            border: 2px solid rgba(0, 173, 181, 0.2);
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border-left-color: #00adb5;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+            display: inline-block;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         /* Web Search Index Cards */
         .result-item {
             margin-bottom: 24px;
@@ -123,22 +278,41 @@
 
     <div class="header">
         <a href="/" class="logo">SPECTRE</a>
-        <h3 class="query-title">Results for: <i>{{ query }}</i></h3>
+        <form action="/search" method="GET" class="top-search-form">
+            <input type="text" name="q" class="top-search-input" value="{{ query }}" placeholder="Search the web..." autocomplete="off" required>
+            <button type="submit" class="top-search-btn">
+    <img src="/templates/backgrounds/search.png" alt="Search" style="width: 16px; height: 16px; display: block; filter: brightness(0) invert(1);">
+	</button>
+        </form>
     </div>
 
     <div class="result-container">
-        <!-- Google-Style RAG Summary Block -->
         {% if ai_overview %}
             <div class="ai-card">
                 <div class="ai-header-wrapper">
                     <span class="ai-badge">Spectre AI Overview</span>
                     <span class="ai-context-indicator">• Synthesized from live search streams</span>
                 </div>
-                <p class="ai-text">{{ ai_overview }}</p>
+                
+                <div id="chat-thread-box" class="chat-thread-container">
+                    <div class="chat-bubble">
+                        <div class="ai-text">{{ ai_overview }}</div>
+                    </div>
+                </div>
+
+                <div id="ai-loader" class="ai-loading-indicator">
+                    <div class="spinner"></div> Spectre is synthesizing response...
+                </div>
+
+                <div class="followup-wrapper">
+                    <form id="followup-form" class="followup-form" onsubmit="submitFollowUp(event)">
+                        <input type="text" id="followup-input" class="followup-input" placeholder="Ask a follow-up question..." autocomplete="off" required>
+                        <button type="submit" class="followup-btn">➔</button>
+                    </form>
+                </div>
             </div>
         {% endif %}
 
-        <!-- Traditional Search Engine Result Lists -->
         {% if search_results %}
             {% for item in search_results %}
                 <div class="result-item">
@@ -151,6 +325,80 @@
             <p>No clean privacy links could be pulled for this specific query phrase.</p>
         {% endif %}
     </div>
+
+    <script>
+        let conversationHistory = [
+            { "role": "user", "content": "{{ query }}" },
+            { "role": "assistant", "content": `{{ ai_overview | tojson | safe }}` }
+        ];
+        
+        const systemInstruction = `{{ system_instruction | tojson | safe }}`;
+
+        async function submitFollowUp(event) {
+            event.preventDefault();
+            
+            const inputElement = document.getElementById("followup-input");
+            const threadBox = document.getElementById("chat-thread-box");
+            const loader = document.getElementById("ai-loader");
+            const queryText = inputElement.value.trim();
+            
+            if (!queryText) return;
+            
+            // 1. Instantly append the user's follow-up message bubble (Aligned to the Right)
+            const userBubble = document.createElement("div");
+            userBubble.className = "user-bubble-wrapper";
+            userBubble.innerHTML = `
+                <div class="bubble-label label-user">You</div>
+                <p class="ai-text user-text-bg">${escapeHtml(queryText)}</p>
+            `;
+            threadBox.appendChild(userBubble);
+            
+            conversationHistory.push({ "role": "user", "content": queryText });
+            
+            inputElement.value = "";
+            loader.style.display = "flex";
+            
+            try {
+                const response = await fetch("/api/followup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        thread: conversationHistory,
+                        system_instruction: systemInstruction
+                    })
+                });
+                
+                const result = await response.json();
+                loader.style.display = "none";
+                
+                if (result.status === "success") {
+                    // 2. Append Spectre AI response bubble (Kept on the Left)
+                    const aiBubble = document.createElement("div");
+                    aiBubble.className = "chat-bubble";
+                    aiBubble.innerHTML = `<div class="bubble-label label-spectre">Spectre AI</div><p class="ai-text">${result.reply}</p>`;
+                    threadBox.appendChild(aiBubble);
+                    
+                    conversationHistory.push({ "role": "assistant", "content": result.reply });
+                } else {
+                    showErrorBubble(threadBox, result.message || "Unknown synthesis failure occurred.");
+                }
+            } catch (err) {
+                loader.style.display = "none";
+                showErrorBubble(threadBox, "Failed to communicate with Spectre engine server pipelines.");
+            }
+        }
+
+        function showErrorBubble(container, errorText) {
+            const errorBubble = document.createElement("div");
+            errorBubble.className = "chat-bubble";
+            errorBubble.innerHTML = `<p class="ai-text" style="color: #ff5555;">⚠️ Error: ${errorText}</p>`;
+            container.appendChild(errorBubble);
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
 
 </body>
 </html>
