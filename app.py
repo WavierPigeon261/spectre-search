@@ -1,41 +1,29 @@
 import sys
 import os
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, request, send_from_directory, jsonify
 import requests
 from bs4 import BeautifulSoup
 from groq import Groq
-from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Ensure the key is pulled from your environment variables
+# Secure key initialization (it will use your hardcoded fallback key on your laptop for now)
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 def generate_rag_summary(query, web_snippets):
-    # If snippets are thin, we guide the AI to use its internal training data
+    # If snippets are thin, guide the AI to use its internal training data
     context = "\n".join([f"- {s}" for s in web_snippets[:4]]) if web_snippets else "No specific web context found."
     
     system_prompt = (
-        f"You are Spectre AI, developed by Specre Technologies. Provide a precise, high-quality answer to: '{query}'.\n\n"
-        f"Context provided:\n{context}\n\n"
+        f"You are Spectre AI, developed by Spectre Technologies. Provide a precise, high-quality answer to the user's inquiry.\n\n"
+        f"Context provided from current web search results:\n{context}\n\n"
         f"Rules:\n"
         f"1. Start with a single, concise paragraph of exactly 6 lines or fewer.\n"
         f"2. If applicable, provide 4 to 5 bullet points below the paragraph for key details, one by one on each line.\n"
         f"3. Keep the content extremely precise, professional, and directly relevant."
     )
-    
-    try:
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "You are a concise, high-precision search assistant."},
-                {"role": "user", "content": system_prompt}
-            ],
-            model="llama-3.3-70b-versatile",
-        )
-        return chat_completion.choices[0].message.content
-    except Exception as e:
-        return f"AI Error: {str(e)}"
+    return system_prompt
 
 @app.route("/")
 def home():
@@ -43,10 +31,6 @@ def home():
 
 @app.route('/status', methods=['GET'])
 def system_status():
-    """
-    Returns the network infrastructure operational status.
-    Used by the landing page to verify backend availability.
-    """
     return jsonify({
         "status": "operational",
         "message": "Spectre core backend network is fully functional",
@@ -55,10 +39,9 @@ def system_status():
 
 @app.route("/health")
 def health_check():
-    # This route returns immediately. 
-    # It does not run search, scraping, or AI API calls.
     return "OK", 200
 
+# 1. Initial Search Endpoint (Fires when you submit a search query from index.html)
 @app.route("/search")
 def search():
     query = request.args.get("q", "").strip()
@@ -78,8 +61,51 @@ def search():
             search_results.append({"title": title.text.strip(), "link": title["href"], "snippet": s_text})
             if s_text: snippets.append(s_text)
             
-    ai_overview = generate_rag_summary(query, snippets)
-    return render_template("results.html", query=query, search_results=search_results, ai_overview=ai_overview)
+    # Assemble the dynamic search rules combined with current web findings
+    system_instruction = generate_rag_summary(query, snippets)
+    
+    try:
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {"role": "system", "content": system_instruction},
+                {"role": "user", "content": query}
+            ],
+            model="llama-3.3-70b-versatile",
+        )
+        ai_overview = chat_completion.choices[0].message.content
+    except Exception as e:
+        ai_overview = f"AI Error: {str(e)}"
+        
+    return render_template(
+        "results.html", 
+        query=query, 
+        search_results=search_results, 
+        ai_overview=ai_overview,
+        system_instruction=system_instruction # Passed to frontend to keep memory of the search context
+    )
+
+# 2. Asynchronous Chat Follow-Up Endpoint (Fires in the background when typing into the thread box)
+@app.route("/api/followup", methods=["POST"])
+def followup():
+    data = request.json or {}
+    thread = data.get("thread", [])
+    system_instruction = data.get("system_instruction", "You are Spectre AI, a high-precision search assistant.")
+    
+    if not thread:
+        return jsonify({"error": "No message thread history provided"}), 400
+        
+    # Reassemble the complete conversation chain for Groq context evaluation
+    messages_payload = [{"role": "system", "content": system_instruction}] + thread
+    
+    try:
+        chat_completion = client.chat.completions.create(
+            messages=messages_payload,
+            model="llama-3.3-70b-versatile",
+        )
+        reply = chat_completion.choices[0].message.content
+        return jsonify({"status": "success", "reply": reply})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/templates/backgrounds/<path:filename>')
 def serve_background(filename):
