@@ -281,8 +281,8 @@
         <form action="/search" method="GET" class="top-search-form">
             <input type="text" name="q" class="top-search-input" value="{{ query }}" placeholder="Search the web..." autocomplete="off" required>
             <button type="submit" class="top-search-btn">
-    <img src="/templates/backgrounds/search.png" alt="Search" style="width: 16px; height: 16px; display: block; filter: brightness(0) invert(1);">
-	</button>
+                <img src="/templates/backgrounds/search.png" alt="Search" style="width: 16px; height: 16px; display: block; filter: brightness(0) invert(1);">
+            </button>
         </form>
     </div>
 
@@ -327,12 +327,13 @@
     </div>
 
     <script>
+        // Fixed: Removed wrapper backticks to prevent JSON token parsing errors
         let conversationHistory = [
-            { "role": "user", "content": "{{ query }}" },
-            { "role": "assistant", "content": `{{ ai_overview | tojson | safe }}` }
+            { "role": "user", "content": {{ query | tojson | safe }} },
+            { "role": "assistant", "content": {{ ai_overview | tojson | safe }} }
         ];
         
-        const systemInstruction = `{{ system_instruction | tojson | safe }}`;
+        const systemInstruction = {{ system_instruction | tojson | safe }};
 
         async function submitFollowUp(event) {
             event.preventDefault();
