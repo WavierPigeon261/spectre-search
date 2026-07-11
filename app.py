@@ -40,6 +40,10 @@ def system_status():
 @app.route("/health")
 def health_check():
     return "OK", 200
+    
+@app.route('/robots.txt')
+def serve_robots():
+    return send_from_directory(app.root_path, 'robots.txt')
 
 # 1. Initial Search Endpoint (Fires when you submit a search query from index.html)
 @app.route("/search")
