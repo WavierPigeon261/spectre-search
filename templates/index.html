@@ -7,19 +7,19 @@
     <title>Spectre - Private Search Engine</title>
     <style>
         body {
-            /* Loads your background image using the templates context path */
-            background: linear-gradient(rgba(13, 15, 18, 0.85), rgba(13, 15, 18, 0.85)), 
-                        url('/templates/backgrounds/image.png') no-repeat center center fixed;
-            background-size: cover;
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
+            /* Reduced opacity from 0.85 to 0.42 to let 50% more light through */
+              background: linear-gradient(rgba(13, 15, 18, 0.42), rgba(13, 15, 18, 0.42)), url('/templates/backgrounds/image.png') no-repeat center center fixed; 
+              background-size: cover; 
+                  color: #e0e0e0; 
+              font-family: 'segoe ui', tahoma, geneva, verdana, sans-serif; 
+              display: flex; 
+              flex-direction: column; 
+              align-items: center; 
+              justify-content: center; 
+              height: 100vh; 
+              margin: 0; 
+}
+
         h1 {
             font-size: 3rem;
             margin-bottom: 20px;
