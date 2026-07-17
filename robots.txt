@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Allow: /templates/backgrounds/image.png
 
 Disallow: /templates/backgrounds/
 Disallow: /api/
