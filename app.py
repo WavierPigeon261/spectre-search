@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from groq import Groq
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static', static_folder='static')
 
 # Secure key initialization (it will use your hardcoded fallback key on your laptop for now)
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))

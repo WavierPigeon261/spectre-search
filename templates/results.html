@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ query }} - Spectre AI Overview</title>
+    <link rel="stylesheet" href="/static/css/search-history.css">
     <style>
         body {
             background-color: #0d0f12;
@@ -42,6 +43,7 @@
             max-width: 550px;
             margin-left: 10px;
             transition: border-color 0.2s, box-shadow 0.2s;
+            position: relative;
         }
         .top-search-form:focus-within {
             border-color: #00adb5;
@@ -279,10 +281,11 @@
     <div class="header">
         <a href="/" class="logo">SPECTRE</a>
         <form action="/search" method="GET" class="top-search-form">
-            <input type="text" name="q" class="top-search-input" value="{{ query }}" placeholder="Search the web..." autocomplete="off" required>
+            <input type="text" name="q" class="top-search-input" value="{{ query }}" placeholder="Search the web..." autocomplete="off" data-has-history="true" required>
             <button type="submit" class="top-search-btn">
                 <img src="/templates/backgrounds/search.png" alt="Search" style="width: 16px; height: 16px; display: block; filter: brightness(0) invert(1);">
             </button>
+            <div id="search-history-dropdown"></div>
         </form>
     </div>
 
@@ -406,6 +409,8 @@
         followupForm.addEventListener("submit", submitFollowUp);
         followupSubmitBtn.addEventListener("click", submitFollowUp);
     </script>
+
+    <script src="/static/js/search-history.js"></script>
 
 </body>
 </html>

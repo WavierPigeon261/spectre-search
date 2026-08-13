@@ -1,0 +1,191 @@
+/**
+ * Spectre Search History Dropdown Styles
+ * Autocomplete and history suggestion styling
+ */
+
+#search-history-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #161b22;
+    border: 1px solid #242b38;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar styling */
+#search-history-dropdown::-webkit-scrollbar {
+    width: 8px;
+}
+
+#search-history-dropdown::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#search-history-dropdown::-webkit-scrollbar-thumb {
+    background: rgba(0, 173, 181, 0.3);
+    border-radius: 4px;
+}
+
+#search-history-dropdown::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 173, 181, 0.5);
+}
+
+/* History header */
+.history-header {
+    padding: 10px 14px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #5c697a;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    position: sticky;
+    top: 0;
+    background-color: #161b22;
+    z-index: 10;
+}
+
+/* Individual history item */
+.history-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    transition: background-color 0.15s ease;
+    gap: 10px;
+}
+
+.history-item:hover,
+.history-item.focused {
+    background-color: rgba(0, 173, 181, 0.1);
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+/* History icon */
+.history-icon {
+    color: #00adb5;
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+/* History text */
+.history-text {
+    flex: 1;
+    color: #e0e0e0;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Remove button */
+.history-remove {
+    color: #5c697a;
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.2s, color 0.2s;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.history-item:hover .history-remove {
+    opacity: 1;
+}
+
+.history-remove:hover {
+    color: #ff6b6b;
+    background-color: rgba(255, 107, 107, 0.1);
+}
+
+/* Footer with clear button */
+.history-footer {
+    padding: 8px 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: rgba(0, 0, 0, 0.2);
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+}
+
+.clear-history-btn {
+    width: 100%;
+    padding: 8px;
+    background-color: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    color: #ff6b6b;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.clear-history-btn:hover {
+    background-color: rgba(255, 107, 107, 0.2);
+    border-color: #ff6b6b;
+}
+
+/* No results message */
+.history-no-results {
+    padding: 20px 14px;
+    color: #5c697a;
+    text-align: center;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Container for search form with history dropdown */
+.search-container {
+    position: relative;
+    width: 100%;
+}
+
+/* Adjust form padding for dropdown visibility */
+form.search-with-history {
+    position: relative;
+}
+
+input[type="text"][data-has-history="true"],
+.top-search-input[data-has-history="true"] {
+    border-radius: 8px 8px 0 0;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+    #search-history-dropdown {
+        max-height: 300px;
+    }
+
+    .history-item {
+        padding: 12px 10px;
+    }
+
+    .history-text {
+        font-size: 0.9rem;
+    }
+}

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spectre - Private Search Engine</title>
+    <link rel="stylesheet" href="/static/css/search-history.css">
     <style>
         body {
             /* Reduced opacity from 0.85 to 0.42 to let 50% more light through */
@@ -33,6 +34,7 @@
             max-width: 600px;
             display: flex;
             backdrop-filter: blur(4px); /* Sleek glassmorphism behind the input bar */
+            position: relative;
         }
         input[type="text"] {
             width: 80%;
@@ -77,10 +79,12 @@
 
     <h1>SPECTRE</h1>
     <form action="/search" method="GET">
-        <input type="text" name="q" placeholder="Search Without Being Searched..." autocomplete="off" required>
+        <input type="text" name="q" placeholder="Search Without Being Searched..." autocomplete="off" data-has-history="true" required>
         <button type="submit">Go</button>
+        <div id="search-history-dropdown"></div>
     </form>
     <div class="tagline">Built to find answers, not collect data.</div>
 
+    <script src="/static/js/search-history.js"></script>
 </body>
 </html>
