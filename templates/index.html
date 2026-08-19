@@ -4,87 +4,176 @@
     <meta name="google-site-verification" content="cZw-j_R3HyR2Mt8L0sUoBmIKHdIp8CL0Q8oSukStxv4" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spectre - Private Search Engine</title>
+    <title>spectre - Private Search Engine</title>
     <link rel="stylesheet" href="/static/css/search-history.css">
+    <!-- Google Font for Brave-style typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    
     <style>
+        /* Smooth transition for theme toggling */
+        html {
+            transition: filter 0.3s ease;
+        }
+
+        /* Inversion class with contrast boost for background details */
+        html.dark-theme {
+            filter: invert(0.92) hue-rotate(180deg) brightness(1.25) contrast(1.15);
+        }
+
         body {
-            /* Reduced opacity from 0.85 to 0.42 to let 50% more light through */
-              background: linear-gradient(rgba(13, 15, 18, 0.42), rgba(13, 15, 18, 0.42)), url('/templates/backgrounds/image.png') no-repeat center center fixed; 
-              background-size: cover; 
-                  color: #e0e0e0; 
-              font-family: 'segoe ui', tahoma, geneva, verdana, sans-serif; 
-              display: flex; 
-              flex-direction: column; 
-              align-items: center; 
-              justify-content: center; 
-              height: 100vh; 
-              margin: 0; 
-}
+            background: url('/templates/backgrounds/image.png') no-repeat center center fixed; 
+            background-size: cover; 
+            color: #2d3748; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+
+        /* Top Right Theme Toggle Button */
+        .theme-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1.5px solid #e2e8f0;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            z-index: 1000;
+        }
+
+        .theme-toggle-btn:hover {
+            transform: scale(1.05);
+            background: #ffffff;
+        }
+
+        .theme-toggle-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #2d3748;
+        }
 
         h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #00adb5;
-            letter-spacing: 4px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.8rem;
+            margin-bottom: 24px;
+            color: #000000;
+            letter-spacing: -1.5px;
             font-weight: 700;
-            text-shadow: 0 0 15px rgba(0, 173, 181, 0.6);
+            text-transform: lowercase;
+            text-shadow: none;
         }
+
         form {
             width: 100%;
             max-width: 600px;
             display: flex;
-            backdrop-filter: blur(4px); /* Sleek glassmorphism behind the input bar */
             position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
         }
+
         input[type="text"] {
             width: 80%;
             padding: 15px;
-            border: 2px solid #1f232a;
+            border: 1.5px solid #e2e8f0;
+            border-right: none;
             border-radius: 8px 0 0 8px;
-            background-color: rgba(22, 26, 34, 0.9);
-            color: #fff;
+            background-color: #ffffff;
+            color: #2d3748;
             font-size: 1.1rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
+
+        input[type="text"]::placeholder {
+            color: #a0aec0;
+        }
+
         input[type="text"]:focus {
-            border-color: #00adb5;
+            border-color: #1aa198;
         }
-        button {
+
+        button.search-btn {
             width: 20%;
             padding: 15px;
             border: none;
-            background-color: #00adb5;
-            color: #fff;
+            background-color: #1aa198;
+            color: #ffffff;
             font-size: 1.1rem;
             font-weight: bold;
             border-radius: 0 8px 8px 0;
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        button:hover {
-            background-color: #007a80;
+
+        button.search-btn:hover {
+            background-color: #147a73;
         }
+
         .tagline {
-            color: #a0aec0;
-            font-size: 0.9rem;
-            margin-top: 15px;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+            color: #4a5568;
+            font-size: 0.95rem;
+            margin-top: 18px;
+            letter-spacing: 0.2px;
             font-weight: 500;
         }
     </style>
 </head>
 <body>
 
-    <h1>SPECTRE</h1>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle-btn" id="themeToggle" aria-label="Toggle Theme">
+        <svg id="themeIcon" viewBox="0 0 24 24">
+            <!-- Moon Icon (default when in Light mode) -->
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <h1>spectre</h1>
     <form action="/search" method="GET">
         <input type="text" name="q" placeholder="Search Without Being Searched..." autocomplete="off" data-has-history="true" required>
-        <button type="submit">Go</button>
+        <button type="submit" class="search-btn">Go</button>
         <div id="search-history-dropdown"></div>
     </form>
     <div class="tagline">Built to find answers, not collect data.</div>
 
     <script src="/static/js/search-history.js"></script>
+
+    <script>
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const htmlElement = document.documentElement;
+
+        const moonPath = "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z";
+        const sunPath = "M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zm0 18a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1zM4.22 4.22a1 1 0 0 1 1.42 0l1.42 1.42a1 1 0 1 1-1.42 1.42L4.22 5.64a1 1 0 0 1 0-1.42zm12.72 12.72a1 1 0 0 1 1.42 0l1.42 1.42a1 1 0 0 1-1.42 1.42l-1.42-1.42a1 1 0 0 1 0-1.42zM2 12a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1zm18 0a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1zM5.64 18.36a1 1 0 0 1 0 1.42l-1.42 1.42a1 1 0 0 1-1.42-1.42l1.42-1.42a1 1 0 0 1 1.42 0zm12.72-12.72a1 1 0 0 1 0 1.42l-1.42 1.42a1 1 0 1 1-1.42-1.42l1.42-1.42a1 1 0 0 1 1.42 0z";
+
+        // Load saved theme preference
+        if (localStorage.getItem('theme') === 'dark') {
+            htmlElement.classList.add('dark-theme');
+            themeIcon.querySelector('path').setAttribute('d', sunPath);
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark-theme');
+            const isDark = htmlElement.classList.contains('dark-theme');
+            
+            themeIcon.querySelector('path').setAttribute('d', isDark ? sunPath : moonPath);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    </script>
 </body>
 </html>

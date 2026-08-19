@@ -6,6 +6,16 @@
     <title>{{ query }} - Spectre AI Overview</title>
     <link rel="stylesheet" href="/static/css/search-history.css">
     <style>
+        /* Smooth transition for theme toggling */
+        html {
+            transition: filter 0.3s ease;
+        }
+
+        /* Inversion class matching index.html */
+        html.dark-theme {
+            filter: invert(0.92) hue-rotate(180deg) brightness(1.25) contrast(1.15);
+        }
+
         body {
             background-color: #0d0f12;
             color: #e0e0e0;
@@ -308,9 +318,9 @@
                 </div>
 
                 <div class="followup-wrapper">
-    <form id="followup-form" class="followup-form">
-        <input type="text" id="followup-input" class="followup-input" placeholder="Ask a follow-up question..." autocomplete="off" required>
-        <button type="button" class="followup-btn" id="followup-submit-btn">➔</button>
+                    <form id="followup-form" class="followup-form">
+                        <input type="text" id="followup-input" class="followup-input" placeholder="Ask a follow-up question..." autocomplete="off" required>
+                        <button type="button" class="followup-btn" id="followup-submit-btn">➔</button>
                     </form>
                 </div>
             </div>
@@ -330,7 +340,11 @@
     </div>
 
     <script>
-        // Fixed: Removed wrapper backticks to prevent JSON token parsing errors
+        // Synchronize theme preference from localStorage on page load
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark-theme');
+        }
+
         let conversationHistory = [
             { "role": "user", "content": {{ query | tojson | safe }} },
             { "role": "assistant", "content": {{ ai_overview | tojson | safe }} }
@@ -348,7 +362,6 @@
             
             if (!queryText) return;
             
-            // 1. Instantly append the user's follow-up message bubble (Aligned to the Right)
             const userBubble = document.createElement("div");
             userBubble.className = "user-bubble-wrapper";
             userBubble.innerHTML = `
@@ -376,7 +389,6 @@
                 loader.style.display = "none";
                 
                 if (result.status === "success") {
-                    // 2. Append Spectre AI response bubble (Kept on the Left)
                     const aiBubble = document.createElement("div");
                     aiBubble.className = "chat-bubble";
                     aiBubble.innerHTML = `<div class="bubble-label label-spectre">Spectre AI</div><p class="ai-text">${result.reply}</p>`;
