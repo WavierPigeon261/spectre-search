@@ -4,7 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spectre Search - Service Notice</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-deep: #050b18;
+            --accent-cyan: #00f2fe;
+            --accent-blue: #4facfe;
+            --glass-bg: rgba(15, 23, 42, 0.55);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-glow: rgba(0, 242, 254, 0.12);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --status-red: #ff5555;
+            --status-red-bg: rgba(255, 85, 85, 0.15);
+            --status-red-border: rgba(255, 85, 85, 0.3);
+            --btn-github-bg: #0d1117;
+            --btn-github-border: rgba(255, 255, 255, 0.15);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -12,119 +31,234 @@
         }
 
         body {
-            background-color: #0d0f12;
-            color: #e0e0e0;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.7;
             min-height: 100vh;
-            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .card {
-            background: #151d2a;
-            border: 1px solid rgba(0, 173, 181, 0.3);
-            border-radius: 12px;
-            padding: 35px 25px;
-            max-width: 480px;
+        /* Ambient Glow Background Spheres */
+        .glow-sphere-1 {
+            position: fixed;
+            top: -10%;
+            left: 20%;
+            width: 50vw;
+            height: 50vw;
+            max-width: 600px;
+            max-height: 600px;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glow-sphere-2 {
+            position: fixed;
+            bottom: -10%;
+            right: 20%;
+            width: 50vw;
+            height: 50vw;
+            max-width: 600px;
+            max-height: 600px;
+            background: radial-gradient(circle, rgba(79, 172, 254, 0.1) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Full Width Wrapper */
+        .page-wrapper {
+            position: relative;
+            z-index: 1;
             width: 100%;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #00adb5;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 20px 0 0;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
         }
 
         .status-badge {
             display: inline-block;
-            background-color: rgba(255, 75, 75, 0.15);
-            color: #ff5555;
-            border: 1px solid rgba(255, 75, 75, 0.3);
-            font-size: 0.75rem;
+            background-color: var(--status-red-bg);
+            color: var(--status-red);
+            border: 1px solid var(--status-red-border);
+            font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
-            padding: 5px 12px;
-            border-radius: 20px;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 1.4rem;
-            color: #ffffff;
+            padding: 6px 16px;
+            border-radius: 50px;
             margin-bottom: 12px;
         }
 
-        p {
-            color: #a0a8b5;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 20px;
+        /* Full-width Glass Panel for Content */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 36px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(0, 242, 254, 0.2);
+            box-shadow: 0 12px 45px rgba(0, 0, 0, 0.5), 0 0 25px var(--glass-glow);
+        }
+
+        h2.notice-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .description {
+            font-size: clamp(1rem, 1.5vw, 1.1rem);
+            color: var(--text-secondary);
+            line-height: 1.8;
+            max-width: 650px;
+            margin: 0 auto 24px;
         }
 
         .divider {
             height: 1px;
-            background: rgba(255, 255, 255, 0.1);
-            margin: 20px 0;
+            background: var(--glass-border);
+            margin: 28px 0;
         }
 
-        .repo-section h2 {
-            font-size: 0.8rem;
+        .repo-section h3 {
+            font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #6c7a89;
-            margin-bottom: 8px;
-        }
-
-        .repo-link {
-            color: #00adb5;
-            text-decoration: none;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
             font-weight: 600;
-            word-break: break-all;
+            font-style: italic;
         }
 
-        .repo-link:hover {
-            color: #00f2fe;
-            text-decoration: underline;
+        /* Black GitHub Button */
+        .btn-github {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 28px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: var(--btn-github-bg);
+            border: 1px solid var(--btn-github-border);
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .copyright {
-            font-size: 0.75rem;
-            color: #5a6578;
-            margin-top: 18px;
-            letter-spacing: 0.5px;
+        .btn-github svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .btn-github:hover {
+            background-color: #161b22;
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Mobile & Tablet Adjustments */
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding: 24px 16px;
+            }
+
+            .glass-panel {
+                padding: 24px;
+                border-radius: 16px;
+            }
+
+            header {
+                margin-bottom: 24px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <div class="logo">SPECTRE SEARCH</div>
-        
-        <span class="status-badge">● Service Down</span>
-        
-        <h1>Maintenance & Service Issues</h1>
-        
-        <p>Spectre Search is currently down due to hosting and server maintenance problems. We're looking into it and working on getting things back up and running.</p>
+    <div class="glow-sphere-1"></div>
+    <div class="glow-sphere-2"></div>
 
-        <div class="divider"></div>
+    <div class="page-wrapper">
+        <header>
+            <h1>Spectre Search</h1>
+            <div>
+                <span class="status-badge">● Service Down</span>
+            </div>
+        </header>
 
-        <div class="repo-section">
-            <h2>Spectre Search GitHub Repository</h2>
-            <a href="https://github.com/WavierPigeon261/spectre-search" target="_blank" class="repo-link">
-                https://github.com/WavierPigeon261/spectre-search ↗
-            </a>
-        </div>
+        <section class="glass-panel">
+            <h2 class="notice-title">Maintenance & Service Issues</h2>
+            <p class="description">
+                Spectre Search is currently down due to hosting and server maintenance problems. We're looking into it and working on getting things back up & running.
+            </p>
 
-        <div class="copyright">
-            © Spectre Technologies. All rights reserved.
-        </div>
+            <div class="divider"></div>
+
+            <div class="repo-section">
+                <h3>Visit the Spectre Search GitHub Repository</h3>
+                <a href="https://github.com/WavierPigeon261/spectre-search" target="_blank" rel="noopener noreferrer" class="btn-github">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"></path>
+                    </svg>
+                    <span>View on GitHub ↗</span>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            <p>© Spectre Technologies. All rights reserved.</p>
+        </footer>
     </div>
 
 </body>
