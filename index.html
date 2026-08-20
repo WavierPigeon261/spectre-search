@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="google-site-verification" content="ANaKBgc9zlIJMT0hhx0_swZda8FuPeviCsvpY7quA04" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spectre Search - Private Web Search</title>
+    <title>Spectre Search - Service Notice</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -18,6 +17,11 @@
             --glass-glow: rgba(0, 242, 254, 0.12);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
+            --status-red: #ff5555;
+            --status-red-bg: rgba(255, 85, 85, 0.15);
+            --status-red-border: rgba(255, 85, 85, 0.3);
+            --btn-github-bg: #0d1117;
+            --btn-github-border: rgba(255, 255, 255, 0.15);
         }
 
         * {
@@ -73,18 +77,19 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 40px 24px;
             flex: 1;
             display: flex;
             flex-direction: column;
+            justify-content: center;
         }
 
         header {
             text-align: center;
-            margin-bottom: 48px;
-            padding: 20px 0;
+            margin-bottom: 32px;
+            padding: 20px 0 0;
         }
 
         h1 {
@@ -94,36 +99,21 @@
             background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
-        .tagline {
-            font-size: clamp(1rem, 2vw, 1.25rem);
-            color: var(--text-secondary);
-            font-weight: 400;
-            margin-bottom: 36px;
-        }
-
-        /* Glass Glowing Button */
-        .btn-glow {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px 36px;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #050b18;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+        .status-badge {
+            display: inline-block;
+            background-color: var(--status-red-bg);
+            color: var(--status-red);
+            border: 1px solid var(--status-red-border);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 6px 16px;
             border-radius: 50px;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 25px rgba(0, 242, 254, 0.35);
-        }
-
-        .btn-glow:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 35px rgba(0, 242, 254, 0.55);
-            filter: brightness(1.1);
+            margin-bottom: 12px;
         }
 
         /* Full-width Glass Panel for Content */
@@ -134,9 +124,10 @@
             border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 36px;
-            margin-bottom: 32px;
+            margin-bottom: 24px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
         }
 
         .glass-panel:hover {
@@ -144,64 +135,66 @@
             box-shadow: 0 12px 45px rgba(0, 0, 0, 0.5), 0 0 25px var(--glass-glow);
         }
 
-        .description {
-            font-size: clamp(1rem, 1.5vw, 1.15rem);
-            color: var(--text-secondary);
-            line-height: 1.8;
-            text-align: center;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        h2 {
-            font-size: 1.35rem;
+        h2.notice-title {
+            font-size: 1.5rem;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 24px;
-            display: flex;
+            margin-bottom: 16px;
+        }
+
+        .description {
+            font-size: clamp(1rem, 1.5vw, 1.1rem);
+            color: var(--text-secondary);
+            line-height: 1.8;
+            max-width: 650px;
+            margin: 0 auto 24px;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--glass-border);
+            margin: 28px 0;
+        }
+
+        .repo-section h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        /* Black GitHub Button */
+        .btn-github {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            text-align: center;
-        }
-
-        /* Vertical Stack Layout */
-        .features-list-vertical {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .feature-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 20px 24px;
-            border-radius: 16px;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 6px;
-        }
-
-        .feature-card:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(0, 242, 254, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .feature-card strong {
-            color: var(--accent-cyan);
-            font-weight: 600;
-            font-size: 1.05rem;
-            text-align: center;
-        }
-
-        .feature-card span {
-            color: var(--text-secondary);
+            padding: 12px 28px;
             font-size: 0.95rem;
-            line-height: 1.6;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: var(--btn-github-bg);
+            border: 1px solid var(--btn-github-border);
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-github svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .btn-github:hover {
+            background-color: #161b22;
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
         }
 
         footer {
@@ -226,7 +219,7 @@
             }
 
             header {
-                margin-bottom: 32px;
+                margin-bottom: 24px;
             }
         }
     </style>
@@ -239,33 +232,27 @@
     <div class="page-wrapper">
         <header>
             <h1>Spectre Search</h1>
-            <p class="tagline">Search the web privately with no tracking.</p>
-            <a href="https://spectre-search.onrender.com" target="_blank" rel="noopener noreferrer" class="btn-glow">
-                Click to open Spectre Search
-            </a>
+            <div>
+                <span class="status-badge">● Service Down</span>
+            </div>
         </header>
 
         <section class="glass-panel">
+            <h2 class="notice-title">Maintenance & Service Issues</h2>
             <p class="description">
-                Spectre Search is a lightweight, privacy-focused search tool designed to deliver clean results and instant answers without tracking your activity. Built with speed and minimalism in mind, it gives you a fast, clutter-free search experience while keeping your data completely private.
+                Spectre Search is currently down due to hosting and server maintenance problems. We're looking into it and working on getting things back up & running.
             </p>
-        </section>
 
-        <section class="glass-panel">
-            <h2>⚙️ How It Works</h2>
-            <div class="features-list-vertical">
-                <div class="feature-card">
-                    <strong>DuckDuckGo Data Fetching</strong>
-                    <span>Queries are proxied directly to DuckDuckGo to extract search results without collecting user logs, personal identifiers, or IP addresses.</span>
-                </div>
-                <div class="feature-card">
-                    <strong>Groq AI Overviews</strong>
-                    <span>Search queries are processed through Groq's high-speed LLM infrastructure to generate real-time AI summaries and answer overviews.</span>
-                </div>
-                <div class="feature-card">
-                    <strong>Custom HTML/CSS UI</strong>
-                    <span>The frontend is built using clean, lightweight HTML, CSS, and JavaScript for a responsive and distraction-free dark-mode layout.</span>
-                </div>
+            <div class="divider"></div>
+
+            <div class="repo-section">
+                <h3>Visit the Spectre Search GitHub Repository</h3>
+                <a href="https://github.com/WavierPigeon261/spectre-search" target="_blank" rel="noopener noreferrer" class="btn-github">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"></path>
+                    </svg>
+                    <span>View on GitHub ↗</span>
+                </a>
             </div>
         </section>
 
