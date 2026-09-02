@@ -12,20 +12,42 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
     
     <style>
-        /* Smooth transition for theme toggling */
-        html {
-            transition: filter 0.3s ease;
+        :root {
+            --page-text: #2d3748;
+            --text-primary: #2d3748;
+            --heading-text: #000000;
+            --input-bg: #ffffff;
+            --input-text: #2d3748;
+            --input-border: #e2e8f0;
+            --placeholder-text: #a0aec0;
+            --secondary-text: #4a5568;
+            --text-secondary: #4a5568;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(0, 0, 0, 0.1);
         }
 
-        /* Inversion class with contrast boost for background details */
         html.dark-theme {
-            filter: invert(0.92) hue-rotate(180deg) brightness(1.25) contrast(1.15);
+            --page-text: #f1f2f6;
+            --text-primary: #f1f2f6;
+            --heading-text: #ffffff;
+            --input-bg: rgba(19, 23, 34, 0.92);
+            --input-text: #f1f2f6;
+            --input-border: #242b38;
+            --placeholder-text: #8c9ba5;
+            --secondary-text: #b5c0c7;
+            --text-secondary: #b5c0c7;
+            --card-bg: rgba(22, 27, 34, 0.8);
+            --card-border: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Smooth transition for theme toggling */
+        html {
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         body {
-            background: url('/templates/backgrounds/image.png') no-repeat center center fixed; 
-            background-size: cover; 
-            color: #2d3748; 
+            background: transparent;
+            color: var(--page-text); 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             display: flex; 
             flex-direction: column; 
@@ -33,6 +55,22 @@
             justify-content: center; 
             height: 100vh; 
             margin: 0; 
+            position: relative;
+            isolation: isolate;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url('/templates/backgrounds/image.png') no-repeat center center;
+            background-size: cover;
+            z-index: -1;
+            transition: filter 0.3s ease;
+        }
+
+        html.dark-theme body::before {
+            filter: invert(0.92) hue-rotate(180deg) brightness(1.25) contrast(1.15);
         }
 
         /* Top Right Theme Toggle Button */
@@ -55,22 +93,31 @@
             z-index: 1000;
         }
 
+        html.dark-theme .theme-toggle-btn {
+            background: rgba(22, 27, 34, 0.8);
+            border-color: #242b38;
+        }
+
         .theme-toggle-btn:hover {
             transform: scale(1.05);
             background: #ffffff;
         }
 
+        html.dark-theme .theme-toggle-btn:hover {
+            background: #242b38;
+        }
+
         .theme-toggle-btn svg {
             width: 20px;
             height: 20px;
-            fill: #2d3748;
+            fill: var(--page-text);
         }
 
         h1 {
             font-family: 'Poppins', sans-serif;
             font-size: 3.8rem;
             margin-bottom: 24px;
-            color: #000000;
+            color: var(--heading-text);
             letter-spacing: -1.5px;
             font-weight: 700;
             text-transform: lowercase;
@@ -89,18 +136,18 @@
         input[type="text"] {
             width: 80%;
             padding: 15px;
-            border: 1.5px solid #e2e8f0;
+            border: 1.5px solid var(--input-border);
             border-right: none;
             border-radius: 8px 0 0 8px;
-            background-color: #ffffff;
-            color: #2d3748;
+            background-color: var(--input-bg);
+            color: var(--input-text);
             font-size: 1.1rem;
             outline: none;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         input[type="text"]::placeholder {
-            color: #a0aec0;
+            color: var(--placeholder-text);
         }
 
         input[type="text"]:focus {
@@ -125,7 +172,7 @@
         }
 
         .tagline {
-            color: #4a5568;
+            color: var(--secondary-text);
             font-size: 0.95rem;
             margin-top: 18px;
             letter-spacing: 0.2px;

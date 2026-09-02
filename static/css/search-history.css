@@ -8,16 +8,40 @@
     top: 100%;
     left: 0;
     right: 0;
-    background-color: #161b22;
-    border: 1px solid #242b38;
+    /* Translucent background using theme variable opacity */
+    background: var(--card-bg, rgba(255, 255, 255, 0.85)) !important;
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid var(--card-border, rgba(0, 0, 0, 0.1));
     border-top: none;
-    border-radius: 0 0 8px 8px;
+    border-radius: 0 0 12px 12px;
     max-height: 400px;
     overflow-y: auto;
     z-index: 1000;
     display: none;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
     animation: slideDown 0.2s ease-out;
+}
+
+/* Explicit fallback for dark mode */
+@media (prefers-color-scheme: dark) {
+    #search-history-dropdown {
+        background: rgba(22, 27, 34, 0.8) !important;
+    }
+}
+
+/* Explicit light theme override */
+html.light-theme #search-history-dropdown,
+body.light-theme #search-history-dropdown {
+    background: rgba(255, 255, 255, 0.85) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Explicit dark theme override */
+html.dark-theme #search-history-dropdown,
+body.dark-theme #search-history-dropdown {
+    background: rgba(22, 27, 34, 0.8) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
 }
 
 @keyframes slideDown {
@@ -33,7 +57,7 @@
 
 /* Scrollbar styling */
 #search-history-dropdown::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
 }
 
 #search-history-dropdown::-webkit-scrollbar-track {
@@ -54,13 +78,13 @@
     padding: 10px 14px;
     font-size: 0.75rem;
     font-weight: bold;
-    color: #5c697a;
+    color: var(--text-secondary, #666);
     text-transform: uppercase;
     letter-spacing: 1px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--card-border, rgba(0, 0, 0, 0.08));
     position: sticky;
     top: 0;
-    background-color: #161b22;
+    background: transparent;
     z-index: 10;
 }
 
@@ -70,14 +94,14 @@
     align-items: center;
     padding: 10px 14px;
     cursor: pointer;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--card-border, rgba(0, 0, 0, 0.05));
     transition: background-color 0.15s ease;
     gap: 10px;
 }
 
 .history-item:hover,
 .history-item.focused {
-    background-color: rgba(0, 173, 181, 0.1);
+    background-color: rgba(0, 173, 181, 0.12);
 }
 
 .history-item:last-child {
@@ -86,15 +110,15 @@
 
 /* History icon */
 .history-icon {
-    color: #00adb5;
-    opacity: 0.6;
+    color: var(--text-secondary, #00adb5);
+    opacity: 0.8;
     flex-shrink: 0;
 }
 
 /* History text */
 .history-text {
     flex: 1;
-    color: #e0e0e0;
+    color: var(--text-primary, #222);
     font-size: 0.95rem;
     white-space: nowrap;
     overflow: hidden;
@@ -103,7 +127,7 @@
 
 /* Remove button */
 .history-remove {
-    color: #5c697a;
+    color: var(--text-secondary, #888);
     opacity: 0;
     cursor: pointer;
     transition: opacity 0.2s, color 0.2s;
@@ -119,14 +143,14 @@
 
 .history-remove:hover {
     color: #ff6b6b;
-    background-color: rgba(255, 107, 107, 0.1);
+    background-color: rgba(255, 107, 107, 0.15);
 }
 
 /* Footer with clear button */
 .history-footer {
     padding: 8px 14px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    background-color: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid var(--card-border, rgba(0, 0, 0, 0.08));
+    background: transparent;
     position: sticky;
     bottom: 0;
     z-index: 10;
@@ -153,7 +177,7 @@
 /* No results message */
 .history-no-results {
     padding: 20px 14px;
-    color: #5c697a;
+    color: var(--text-secondary, #777);
     text-align: center;
     font-size: 0.9rem;
     font-style: italic;
