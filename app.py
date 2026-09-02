@@ -74,7 +74,7 @@ def search():
                 {"role": "system", "content": system_instruction},
                 {"role": "user", "content": query}
             ],
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-120b", # <-- Fixed: Replaced old 70b model
         )
         ai_overview = chat_completion.choices[0].message.content
     except Exception as e:
@@ -104,7 +104,7 @@ def followup():
     try:
         chat_completion = client.chat.completions.create(
             messages=messages_payload,
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-120b", # <-- Fixed: Replaced old 70b model
         )
         reply = chat_completion.choices[0].message.content
         return jsonify({"status": "success", "reply": reply})

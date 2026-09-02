@@ -3,287 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ query }} - Spectre AI Overview</title>
+    <title>{{ query }} - Spectre Overview</title>
     <link rel="stylesheet" href="/static/css/search-history.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        body {
-            background-color: #0d0f12;
-            color: #e0e0e0;
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-        
-        /* Centered Navigation Header Layout */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            border-bottom: 1px solid #1f232a;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-        .logo {
-            color: #00adb5;
-            text-decoration: none;
-            font-size: 1.6rem;
-            font-weight: bold;
-            margin-right: 25px;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(0, 173, 181, 0.2);
-        }
-        .top-search-form {
-            display: flex;
-            align-items: center;
-            background-color: #131722;
-            border: 1px solid #242b38;
-            border-radius: 24px;
-            padding: 2px 14px;
-            width: 100%;
-            max-width: 550px;
-            margin-left: 10px;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            position: relative;
-        }
-        .top-search-form:focus-within {
-            border-color: #00adb5;
-            box-shadow: 0 0 8px rgba(0, 173, 181, 0.3);
-        }
-        .top-search-input {
-            flex: 1;
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 0.95rem;
-            padding: 8px;
-            outline: none;
-        }
-        .top-search-input::placeholder {
-            color: #5c697a;
-        }
-        .top-search-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.1s;
-        }
-        .top-search-btn:hover {
-            transform: scale(1.1);
-        }
+    /* CSS Color Tokens */
+    :root {
+        --bg-color: #0d0f12;
+        --card-bg: linear-gradient(145deg, #151d2a 0%, #0f131a 100%);
+        --card-border: rgba(255, 255, 255, 0.15);
+        --text-primary: #f1f2f6;
+        --text-secondary: #8c9ba5;
+        --accent-color: #ffffff;
+        --input-bg: #131722;
+        --input-border: #242b38;
+        --result-card-bg: #13161c;
+        --result-card-border: #1c212b;
+        --link-color: #74b9ff;
+        --search-icon-filter: brightness(0) invert(1);
+    }
 
-        .result-container {
-            max-width: 750px;
-            margin-left: 20px;
-        }
-        
-        /* Google-Style Live AI Overview Container */
-        .ai-card {
-            background: linear-gradient(145deg, #151d2a 0%, #0f131a 100%);
-            border-left: 4px solid #00adb5;
-            border-top: 1px solid rgba(0, 173, 181, 0.2);
-            border-right: 1px solid rgba(0, 173, 181, 0.2);
-            border-bottom: 1px solid rgba(0, 173, 181, 0.2);
-            border-radius: 0 8px 8px 0;
-            padding: 22px;
-            margin-bottom: 30px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-        }
-        .ai-header-wrapper {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 10px;
-        }
-        .ai-badge {
-            background-color: rgba(0, 173, 181, 0.15);
-            color: #00adb5;
-            font-size: 0.75rem;
-            font-weight: bold;
-            padding: 4px 10px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            border: 1px solid rgba(0, 173, 181, 0.3);
-        }
-        .ai-context-indicator {
-            color: #5c697a;
-            font-size: 0.8rem;
-            margin-left: 12px;
-            font-style: italic;
-        }
-        
-        /* Conversational Threads Layout Engine */
-        .chat-thread-container {
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-        }
-        .chat-bubble {
-            margin-bottom: 15px;
-            animation: fadeIn 0.3s ease-in-out forwards;
-        }
-        
-        /* Right-aligned layout container for User Queries */
-        .user-bubble-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            margin-bottom: 15px;
-            animation: fadeIn 0.3s ease-in-out forwards;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .bubble-label {
-            font-size: 0.75rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-        }
-        .label-user { color: #74b9ff; }
-        .label-spectre { color: #00adb5; }
-        
-        .ai-text {
-            font-size: 1.08rem;
-            line-height: 1.65;
-            color: #f1f2f6;
-            margin: 0;
-            font-weight: 400;
-            white-space: pre-line;
-        }
-        
-        /* Distinct modern background design box for User Prompts */
-        .user-text-bg {
-            background-color: #1c2331;
-            padding: 10px 14px;
-            border-radius: 8px 8px 0 8px;
-            max-width: 80%;
-            word-wrap: break-word;
-        }
-        
-        /* Interactive Follow-Up Input Architecture */
-        .followup-wrapper {
-            margin-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 15px;
-        }
-        .followup-form {
-            display: flex;
-            align-items: center;
-            background-color: #131722;
-            border: 1px solid #242b38;
-            border-radius: 24px;
-            padding: 4px 14px;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .followup-form:focus-within {
-            border-color: #00adb5;
-            box-shadow: 0 0 8px rgba(0, 173, 181, 0.3);
-        }
-        .followup-input {
-            flex: 1;
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1rem;
-            padding: 10px;
-            outline: none;
-        }
-        .followup-input::placeholder {
-            color: #5c697a;
-        }
-        .followup-btn {
-            background-color: #00adb5;
-            color: #0d0f12;
-            border: none;
-            border-radius: 50%;
-            width: 34px;
-            height: 34px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s, background-color 0.2s;
-        }
-        .followup-btn:hover {
-            transform: scale(1.05);
-            background-color: #00f2fe;
-        }
-        .ai-loading-indicator {
-            display: none;
-            color: #00adb5;
-            font-size: 0.9rem;
-            font-style: italic;
-            margin-top: 10px;
-            align-items: center;
-        }
-        .spinner {
-            border: 2px solid rgba(0, 173, 181, 0.2);
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            border-left-color: #00adb5;
-            animation: spin 1s linear infinite;
-            margin-right: 8px;
-            display: inline-block;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    /* Light Theme Overrides */
+    html.light-theme {
+        --bg-color: #f8f9fa;
+        --card-bg: #ffffff;
+        --card-border: #e2e8f0;
+        --text-primary: #1a202c;
+        --text-secondary: #64748b;
+        --accent-color: #000000;
+        --input-bg: #f1f5f9;
+        --input-border: #cbd5e1;
+        --result-card-bg: #ffffff;
+        --result-card-border: #e2e8f0;
+        --link-color: #1a0dab;
+        --search-icon-filter: brightness(0);
+    }
 
-        /* Web Search Index Cards */
-        .result-item {
-            margin-bottom: 24px;
-            background-color: #13161c;
-            padding: 18px;
-            border-radius: 8px;
-            border: 1px solid #1c212b;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        .result-item:hover {
-            border-color: #242b38;
-            transform: translateY(-1px);
-        }
-        .result-title {
-            font-size: 1.25rem;
-            color: #74b9ff;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .result-title:hover {
-            text-decoration: underline;
-        }
-        .result-url {
-            color: #00adb5;
-            font-size: 0.85rem;
-            display: block;
-            margin-top: 5px;
-            word-break: break-all;
-            opacity: 0.75;
-        }
-        .result-snippet {
-            color: #b2bec3;
-            margin-top: 10px;
-            font-size: 0.95rem;
-            line-height: 1.55;
-        }
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-primary);
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        padding: 20px;
+        transition: background-color 0.2s, color 0.2s;
+    }
+    
+    /* Navigation Header Layout */
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        border-bottom: 1px solid var(--card-border);
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .logo {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-size: 2.0rem;
+        font-weight: 800;
+        margin-right: 25px;
+        letter-spacing: 1px;
+        text-transform: lowercase;
+    }
+    
+    .top-search-form {
+        display: flex;
+        align-items: center;
+        background-color: var(--input-bg);
+        border: 1px solid var(--input-border);
+        border-radius: 24px;
+        padding: 2px 14px;
+        width: 100%;
+        max-width: 550px;
+        margin-left: 10px;
+        position: relative;
+    }
+    .top-search-form:focus-within {
+        border-color: var(--accent-color);
+    }
+    .top-search-input {
+        flex: 1;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        padding: 8px;
+        outline: none;
+    }
+    .top-search-input::placeholder {
+        color: var(--text-secondary);
+    }
+    .top-search-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .top-search-btn img {
+        filter: var(--search-icon-filter) !important;
+    }
+
+    .result-container {
+        max-width: 750px;
+        margin-left: 20px;
+    }
+    
+    /* Live AI Overview Container */
+    .ai-card {
+        background: var(--card-bg);
+        border-left: 4px solid var(--accent-color);
+        border-top: 1px solid var(--card-border);
+        border-right: 1px solid var(--card-border);
+        border-bottom: 1px solid var(--card-border);
+        border-radius: 0 8px 8px 0;
+        padding: 22px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .ai-header-wrapper {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        border-bottom: 1px solid var(--card-border);
+        padding-bottom: 10px;
+    }
+    .ai-badge {
+        background-color: var(--input-bg);
+        color: var(--accent-color);
+        font-size: 0.75rem;
+        font-weight: bold;
+        padding: 4px 10px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        border: 1px solid var(--card-border);
+    }
+    .ai-context-indicator {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        margin-left: 12px;
+        font-style: italic;
+    }
+    
+    /* Conversational Threads */
+    .chat-thread-container {
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+    }
+    .chat-bubble {
+        margin-bottom: 15px;
+    }
+    .user-bubble-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        margin-bottom: 15px;
+    }
+    .bubble-label {
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+    }
+    .label-user { color: var(--link-color); }
+    .label-spectre { color: var(--accent-color); }
+    
+    .ai-text {
+        font-size: 1.05rem;
+        line-height: 1.65;
+        color: var(--text-primary);
+        margin: 0;
+    }
+    .ai-text p {
+        margin: 0 0 10px 0;
+    }
+    .ai-text p:last-child {
+        margin-bottom: 0;
+    }
+    .ai-text ul, .ai-text ol {
+        margin: 8px 0;
+        padding-left: 20px;
+    }
+    .ai-text li {
+        margin-bottom: 4px;
+    }
+    .user-text-bg {
+        background-color: var(--input-bg);
+        border: 1px solid var(--input-border);
+        padding: 10px 14px;
+        border-radius: 8px 8px 0 8px;
+        max-width: 80%;
+        word-wrap: break-word;
+    }
+
+    /* AI Loader Element Styles */
+    .ai-loading-indicator {
+        display: none;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-style: italic;
+        margin-top: 15px;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+    .spinner {
+        border: 2px solid var(--input-border);
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border-left-color: var(--accent-color);
+        animation: spin 1s linear infinite;
+        margin-right: 8px;
+        display: inline-block;
+    }
+    @keyframes spin { 
+        0% { transform: rotate(0deg); } 
+        100% { transform: rotate(360deg); } 
+    }
+    
+    /* Follow-Up Input */
+    .followup-wrapper {
+        margin-top: 20px;
+        border-top: 1px solid var(--card-border);
+        padding-top: 15px;
+    }
+    .followup-form {
+        display: flex;
+        align-items: center;
+        background-color: var(--input-bg);
+        border: 1px solid var(--input-border);
+        border-radius: 24px;
+        padding: 4px 14px;
+    }
+    .followup-form:focus-within {
+        border-color: var(--accent-color);
+    }
+    .followup-input {
+        flex: 1;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 1rem;
+        padding: 10px;
+        outline: none;
+    }
+    .followup-input::placeholder {
+        color: var(--text-secondary);
+    }
+    .followup-btn {
+        background-color: var(--accent-color);
+        color: var(--bg-color);
+        border: none;
+        border-radius: 50%;
+        width: 34px;
+        height: 34px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Web Search Cards */
+    .result-item {
+        margin-bottom: 24px;
+        background-color: var(--result-card-bg);
+        padding: 18px;
+        border-radius: 8px;
+        border: 1px solid var(--result-card-border);
+    }
+    .result-title {
+        font-size: 1.25rem;
+        color: var(--link-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .result-title:hover {
+        text-decoration: underline;
+    }
+    .result-url {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        display: block;
+        margin-top: 5px;
+    }
+    .result-snippet {
+        color: var(--text-primary);
+        margin-top: 10px;
+        font-size: 0.95rem;
+        line-height: 1.55;
+    }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <a href="/" class="logo">SPECTRE</a>
+        <a href="/" class="logo">spectre</a>
         <form action="/search" method="GET" class="top-search-form">
             <input type="text" name="q" class="top-search-input" value="{{ query }}" placeholder="Search the web..." autocomplete="off" data-has-history="true" required>
             <button type="submit" class="top-search-btn">
-                <img src="/templates/backgrounds/search.png" alt="Search" style="width: 16px; height: 16px; display: block; filter: brightness(0) invert(1);">
+                <img src="/templates/backgrounds/search.png" alt="Search" style="width: 16px; height: 16px; display: block;">
             </button>
             <div id="search-history-dropdown"></div>
         </form>
@@ -299,7 +325,7 @@
                 
                 <div id="chat-thread-box" class="chat-thread-container">
                     <div class="chat-bubble">
-                        <div class="ai-text">{{ ai_overview }}</div>
+                        <div class="ai-text" id="initial-ai-overview"></div>
                     </div>
                 </div>
 
@@ -308,9 +334,9 @@
                 </div>
 
                 <div class="followup-wrapper">
-    <form id="followup-form" class="followup-form">
-        <input type="text" id="followup-input" class="followup-input" placeholder="Ask a follow-up question..." autocomplete="off" required>
-        <button type="button" class="followup-btn" id="followup-submit-btn">➔</button>
+                    <form id="followup-form" class="followup-form">
+                        <input type="text" id="followup-input" class="followup-input" placeholder="Ask a follow-up question..." autocomplete="off" required>
+                        <button type="button" class="followup-btn" id="followup-submit-btn">➔</button>
                     </form>
                 </div>
             </div>
@@ -330,84 +356,111 @@
     </div>
 
     <script>
-        // Fixed: Removed wrapper backticks to prevent JSON token parsing errors
-        let conversationHistory = [
-            { "role": "user", "content": {{ query | tojson | safe }} },
-            { "role": "assistant", "content": {{ ai_overview | tojson | safe }} }
-        ];
+    // 1. Initialize Theme from localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+    } else {
+        document.documentElement.classList.remove('light-theme');
+    }
+
+    // 2. Hide loader state and parse initial overview on load
+    document.addEventListener("DOMContentLoaded", () => {
+        const loader = document.getElementById("ai-loader");
+        if (loader) loader.style.display = "none";
+
+        const initialText = {{ ai_overview | tojson | safe }};
+        const initialBox = document.getElementById("initial-ai-overview");
+        if (initialBox && initialText) {
+            initialBox.innerHTML = marked.parse(initialText);
+        }
+    });
+
+    // 3. Conversation Thread Context
+    let conversationHistory = [
+        { "role": "user", "content": {{ query | tojson | safe }} },
+        { "role": "assistant", "content": {{ ai_overview | tojson | safe }} }
+    ];
+    
+    const systemInstruction = {{ system_instruction | tojson | safe }};
+
+    // 4. Follow-up AJAX submission handler
+    async function submitFollowUp(event) {
+        event.preventDefault();
         
-        const systemInstruction = {{ system_instruction | tojson | safe }};
-
-        async function submitFollowUp(event) {
-            event.preventDefault();
+        const inputElement = document.getElementById("followup-input");
+        const threadBox = document.getElementById("chat-thread-box");
+        const loader = document.getElementById("ai-loader");
+        const queryText = inputElement.value.trim();
+        
+        if (!queryText) return;
+        
+        // Render User Message Bubble
+        const userBubble = document.createElement("div");
+        userBubble.className = "user-bubble-wrapper";
+        userBubble.innerHTML = `
+            <div class="bubble-label label-user">You</div>
+            <div class="ai-text user-text-bg">${escapeHtml(queryText)}</div>
+        `;
+        threadBox.appendChild(userBubble);
+        
+        conversationHistory.push({ "role": "user", "content": queryText });
+        
+        inputElement.value = "";
+        
+        // Show synthesized text ONLY during live fetch
+        if (loader) loader.style.display = "flex";
+        
+        try {
+            const response = await fetch("/api/followup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    thread: conversationHistory,
+                    system_instruction: systemInstruction
+                })
+            });
             
-            const inputElement = document.getElementById("followup-input");
-            const threadBox = document.getElementById("chat-thread-box");
-            const loader = document.getElementById("ai-loader");
-            const queryText = inputElement.value.trim();
+            const result = await response.json();
             
-            if (!queryText) return;
+            // Hide loading message once data returns
+            if (loader) loader.style.display = "none";
             
-            // 1. Instantly append the user's follow-up message bubble (Aligned to the Right)
-            const userBubble = document.createElement("div");
-            userBubble.className = "user-bubble-wrapper";
-            userBubble.innerHTML = `
-                <div class="bubble-label label-user">You</div>
-                <p class="ai-text user-text-bg">${escapeHtml(queryText)}</p>
-            `;
-            threadBox.appendChild(userBubble);
-            
-            conversationHistory.push({ "role": "user", "content": queryText });
-            
-            inputElement.value = "";
-            loader.style.display = "flex";
-            
-            try {
-                const response = await fetch("/api/followup", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        thread: conversationHistory,
-                        system_instruction: systemInstruction
-                    })
-                });
+            if (result.status === "success") {
+                const aiBubble = document.createElement("div");
+                aiBubble.className = "chat-bubble";
+                aiBubble.innerHTML = `
+                    <div class="bubble-label label-spectre">Spectre AI</div>
+                    <div class="ai-text">${marked.parse(result.reply)}</div>
+                `;
+                threadBox.appendChild(aiBubble);
                 
-                const result = await response.json();
-                loader.style.display = "none";
-                
-                if (result.status === "success") {
-                    // 2. Append Spectre AI response bubble (Kept on the Left)
-                    const aiBubble = document.createElement("div");
-                    aiBubble.className = "chat-bubble";
-                    aiBubble.innerHTML = `<div class="bubble-label label-spectre">Spectre AI</div><p class="ai-text">${result.reply}</p>`;
-                    threadBox.appendChild(aiBubble);
-                    
-                    conversationHistory.push({ "role": "assistant", "content": result.reply });
-                } else {
-                    showErrorBubble(threadBox, result.message || "Unknown synthesis failure occurred.");
-                }
-            } catch (err) {
-                loader.style.display = "none";
-                showErrorBubble(threadBox, "Failed to communicate with Spectre engine server pipelines.");
+                conversationHistory.push({ "role": "assistant", "content": result.reply });
+            } else {
+                showErrorBubble(threadBox, result.message || "Unknown synthesis failure occurred.");
             }
+        } catch (err) {
+            if (loader) loader.style.display = "none";
+            showErrorBubble(threadBox, "Failed to communicate with Spectre engine server pipelines.");
         }
+    }
 
-        function showErrorBubble(container, errorText) {
-            const errorBubble = document.createElement("div");
-            errorBubble.className = "chat-bubble";
-            errorBubble.innerHTML = `<p class="ai-text" style="color: #ff5555;">⚠️ Error: ${errorText}</p>`;
-            container.appendChild(errorBubble);
-        }
+    function showErrorBubble(container, errorText) {
+        const errorBubble = document.createElement("div");
+        errorBubble.className = "chat-bubble";
+        errorBubble.innerHTML = `<div class="ai-text" style="color: #ff5555;">⚠️ Error: ${errorText}</div>`;
+        container.appendChild(errorBubble);
+    }
 
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
+    function escapeHtml(text) {
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
 
-        const followupForm = document.getElementById("followup-form");
-        const followupSubmitBtn = document.getElementById("followup-submit-btn");
+    const followupForm = document.getElementById("followup-form");
+    const followupSubmitBtn = document.getElementById("followup-submit-btn");
 
-        followupForm.addEventListener("submit", submitFollowUp);
-        followupSubmitBtn.addEventListener("click", submitFollowUp);
+    if (followupForm) followupForm.addEventListener("submit", submitFollowUp);
+    if (followupSubmitBtn) followupSubmitBtn.addEventListener("click", submitFollowUp);
     </script>
 
     <script src="/static/js/search-history.js"></script>
