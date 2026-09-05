@@ -7,9 +7,14 @@ from groq import Groq
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 
-# Secure key initialization (it will use your hardcoded fallback key on your laptop for now)
-client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 HEADERS = {"User-Agent": "Mozilla/5.0"}
+
+
+def get_groq_client():
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        return None
+    return Groq(api_key=api_key)
 
 def generate_rag_summary(query, web_snippets):
     # If snippets are thin, guide the AI to use its internal training data
@@ -67,18 +72,22 @@ def search():
             
     # Assemble the dynamic search rules combined with current web findings
     system_instruction = generate_rag_summary(query, snippets)
+    client = get_groq_client()
     
-    try:
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": system_instruction},
-                {"role": "user", "content": query}
-            ],
-            model="openai/gpt-oss-120b", # <-- Fixed: Replaced old 70b model
-        )
-        ai_overview = chat_completion.choices[0].message.content
-    except Exception as e:
-        ai_overview = f"AI Error: {str(e)}"
+    if client is None:
+        ai_overview = "AI overview is unavailable because GROQ_API_KEY is not configured."
+    else:
+        try:
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": query}
+                ],
+                model="openai/gpt-oss-120b", # <-- Fixed: Replaced old 70b model
+            )
+            ai_overview = chat_completion.choices[0].message.content
+        except Exception as e:
+            ai_overview = f"AI Error: {str(e)}"
         
     return render_template(
         "results.html", 
@@ -100,6 +109,13 @@ def followup():
         
     # Reassemble the complete conversation chain for Groq context evaluation
     messages_payload = [{"role": "system", "content": system_instruction}] + thread
+    client = get_groq_client()
+
+    if client is None:
+        return jsonify({
+            "status": "error",
+            "message": "GROQ_API_KEY is not configured on the server."
+        }), 503
     
     try:
         chat_completion = client.chat.completions.create(
