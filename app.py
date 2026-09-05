@@ -1,11 +1,20 @@
 import sys
 import os
-from flask import Flask, render_template, request, send_from_directory, jsonify
+from flask import Flask, render_template, request, send_from_directory, jsonify, redirect
 import requests
 from bs4 import BeautifulSoup
 from groq import Groq
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
+
+# --- RENDER TO VERCEL REDIRECT LOGIC ---
+@app.before_request
+def redirect_render_to_vercel():
+    if os.environ.get("IS_RENDER") == "true":
+        # Redirects all incoming traffic from Render to your new Vercel URL
+        # Keeping any search queries or paths intact
+        return redirect(f"https://spectre-search-app.vercel.app{request.full_path}", code=301)
+# --------------------------------------
 
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
