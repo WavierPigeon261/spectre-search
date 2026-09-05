@@ -13,7 +13,7 @@ def redirect_render_to_vercel():
     if os.environ.get("IS_RENDER") == "true":
         # Redirects all incoming traffic from Render to your new Vercel URL
         # Keeping any search queries or paths intact
-        return redirect(f"https://spectre-search-app.vercel.app{request.full_path}", code=301)
+        return redirect(f"https://spectresearch.vercel.app{request.full_path}", code=301)
 # --------------------------------------
 
 HEADERS = {"User-Agent": "Mozilla/5.0"}
