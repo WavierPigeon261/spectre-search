@@ -5,6 +5,8 @@
 
 [![Spectre-Search](https://img.shields.io/badge/Click_to_open-Spectre_Search-blue?style=for-the-badge)](https://spectresearch.vercel.app)
 
+![License](https://img.shields.io/badge/License-AGPL--V3.0-yellow?style=for-the-badge)
+
 ---
 
 Spectre Search is a lightweight, privacy-focused search tool designed to deliver clean results and instant answers without tracking your activity. Built with speed and minimalism in mind, it gives you a fast, clutter-free search experience while keeping your data completely private.
