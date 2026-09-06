@@ -21,4 +21,4 @@ Spectre Search is a lightweight, privacy-focused search tool designed to deliver
 
 ---
 
-*Spectre Technologies. Open-source.*
+
