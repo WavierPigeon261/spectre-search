@@ -17,7 +17,7 @@ Spectre Search is a lightweight, privacy-focused search tool designed to deliver
 
 * **DuckDuckGo Data Fetching:** Queries are proxied directly to DuckDuckGo to extract search results without collecting user logs, personal identifiers, or IP addresses.
 * **Groq AI Overviews:** Search queries are processed through Groq's high-speed LLM infrastructure to generate real-time AI summaries and answer overviews.
-* **Custom HTML/CSS UI:** The frontend is built using clean, lightweight HTML, CSS, and JavaScript for a responsive and distraction-free dark-mode layout.
+* **Custom HTML/CSS UI:** The frontend is built using clean, lightweight HTML, CSS, and JavaScript for a responsive and distraction-free dark/light mode layout.
 
 ---
 
