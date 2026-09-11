@@ -21,4 +21,10 @@ Spectre Search is a lightweight, privacy-focused search tool designed to deliver
 
 ---
 
+##
 
+Quick Deploy
+
+Get your own instance of this search engine running on Vercel in one click.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FWavierPigeon261%2Fspectre-search&project-name=spectre-search)   
