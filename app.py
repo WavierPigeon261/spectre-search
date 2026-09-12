@@ -39,6 +39,33 @@ def generate_rag_summary(query, web_snippets):
     )
     return system_prompt
 
+
+def generate_ask_summary(query):
+    system_prompt = (
+        "You are Spectre Ask, a focused research assistant. Answer the user's question directly, clearly, and precisely.\n\n"
+        "Rules:\n"
+        "1. Keep the answer concise, factual, and professionally written.\n"
+        "2. Start with a short paragraph, then add 3 to 5 bullet points only when helpful.\n"
+        "3. If the question is highly specific, prioritize the most relevant answer and the clearest next step.\n"
+        "4. Avoid guessing or claiming certainty without evidence."
+    )
+    return system_prompt
+
+
+def generate_ask_context_summary(context):
+    return (
+        "You are Spectre Ask, a focused research assistant. Answer the user's latest question "
+        "using the earlier search answer as conversation context.\n\n"
+        "Earlier search answer:\n"
+        f"{context}\n\n"
+        "Rules:\n"
+        "1. Use the earlier answer when it is relevant, but you may also use your general knowledge "
+        "to answer factual follow-up questions that the earlier answer did not spell out.\n"
+        "2. Do not claim that information is unavailable merely because it was omitted from the earlier answer.\n"
+        "3. Be concise, direct, and transparent when a fact is an estimate or depends on the route or source.\n"
+        "4. Use a short paragraph and bullet points only when they improve clarity."
+    )
+
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -105,6 +132,106 @@ def search():
         ai_overview=ai_overview,
         system_instruction=system_instruction # Passed to frontend to keep memory of the search context
     )
+
+
+@app.route("/ask", methods=["GET", "POST"])
+def ask():
+    query = request.values.get("q", "").strip()
+    context = request.values.get("context", "").strip()
+    original_query = request.values.get("original_query", "").strip()
+
+    if context:
+        system_instruction = generate_ask_context_summary(context)
+    else:
+        system_instruction = generate_ask_summary(query)
+
+    client = get_groq_client()
+
+    if not query:
+        return render_template(
+            "ask.html",
+            query="",
+            ai_overview="",
+            system_instruction=system_instruction,
+            context=context,
+            original_query=original_query,
+        )
+
+    if client is None:
+        ai_overview = "AI overview is unavailable because GROQ_API_KEY is not configured."
+    else:
+        try:
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": query}
+                ],
+                model="openai/gpt-oss-120b",
+            )
+            ai_overview = chat_completion.choices[0].message.content
+        except Exception as e:
+            ai_overview = f"AI Error: {str(e)}"
+
+    return render_template(
+        "ask.html",
+        query=query,
+        ai_overview=ai_overview,
+        system_instruction=system_instruction,
+        context=context,
+        original_query=original_query,
+    )
+
+
+@app.route("/api/ask", methods=["POST"])
+def api_ask():
+    data = request.json or {}
+    query = (data.get("query") or "").strip()
+    context = (data.get("context") or "").strip()
+    original_query = (data.get("original_query") or "").strip()
+    thread = data.get("thread") or []
+
+    if not query:
+        return jsonify({"status": "error", "message": "No query provided."}), 400
+
+    if context:
+        system_instruction = generate_ask_context_summary(context)
+    else:
+        system_instruction = generate_ask_summary(query)
+
+    normalized_thread = []
+    for item in thread:
+        if isinstance(item, dict) and "role" in item and "content" in item:
+            normalized_thread.append({"role": item["role"], "content": str(item["content"])})
+
+    if context and not normalized_thread:
+        if original_query:
+            normalized_thread.append({"role": "user", "content": original_query})
+        if context:
+            normalized_thread.append({"role": "assistant", "content": context})
+
+    if not normalized_thread or normalized_thread[-1].get("content") != query:
+        normalized_thread.append({"role": "user", "content": query})
+
+    client = get_groq_client()
+    if client is None:
+        return jsonify({"status": "error", "message": "GROQ_API_KEY is not configured on the server."}), 503
+
+    try:
+        messages_payload = [{"role": "system", "content": system_instruction}] + normalized_thread
+        chat_completion = client.chat.completions.create(
+            messages=messages_payload,
+            model="openai/gpt-oss-120b",
+        )
+        reply = chat_completion.choices[0].message.content
+        return jsonify({
+            "status": "success",
+            "reply": reply,
+            "context": context,
+            "original_query": original_query,
+            "thread": normalized_thread,
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # 2. Asynchronous Chat Follow-Up Endpoint (Fires in the background when typing into the thread box)
 @app.route("/api/followup", methods=["POST"])

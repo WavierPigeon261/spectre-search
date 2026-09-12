@@ -376,84 +376,41 @@
         }
     });
 
-    // 3. Conversation Thread Context
-    let conversationHistory = [
-        { "role": "user", "content": {{ query | tojson | safe }} },
-        { "role": "assistant", "content": {{ ai_overview | tojson | safe }} }
-    ];
-    
-    const systemInstruction = {{ system_instruction | tojson | safe }};
+    function saveAskHistory(queryText) {
+        const history = JSON.parse(localStorage.getItem('spectreAskHistory') || '[]');
+        const filtered = history.filter(item => item !== queryText);
+        filtered.unshift(queryText);
+        localStorage.setItem('spectreAskHistory', JSON.stringify(filtered.slice(0, 25)));
+    }
 
-    // 4. Follow-up AJAX submission handler
-    async function submitFollowUp(event) {
+    function submitFollowUp(event) {
         event.preventDefault();
-        
+
         const inputElement = document.getElementById("followup-input");
-        const threadBox = document.getElementById("chat-thread-box");
-        const loader = document.getElementById("ai-loader");
         const queryText = inputElement.value.trim();
-        
+
         if (!queryText) return;
-        
-        // Render User Message Bubble
-        const userBubble = document.createElement("div");
-        userBubble.className = "user-bubble-wrapper";
-        userBubble.innerHTML = `
-            <div class="bubble-label label-user">You</div>
-            <div class="ai-text user-text-bg">${escapeHtml(queryText)}</div>
-        `;
-        threadBox.appendChild(userBubble);
-        
-        conversationHistory.push({ "role": "user", "content": queryText });
-        
-        inputElement.value = "";
-        
-        // Show synthesized text ONLY during live fetch
-        if (loader) loader.style.display = "flex";
-        
-        try {
-            const response = await fetch("/api/followup", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    thread: conversationHistory,
-                    system_instruction: systemInstruction
-                })
-            });
-            
-            const result = await response.json();
-            
-            // Hide loading message once data returns
-            if (loader) loader.style.display = "none";
-            
-            if (result.status === "success") {
-                const aiBubble = document.createElement("div");
-                aiBubble.className = "chat-bubble";
-                aiBubble.innerHTML = `
-                    <div class="bubble-label label-spectre">Spectre AI</div>
-                    <div class="ai-text">${marked.parse(result.reply)}</div>
-                `;
-                threadBox.appendChild(aiBubble);
-                
-                conversationHistory.push({ "role": "assistant", "content": result.reply });
-            } else {
-                showErrorBubble(threadBox, result.message || "Unknown synthesis failure occurred.");
-            }
-        } catch (err) {
-            if (loader) loader.style.display = "none";
-            showErrorBubble(threadBox, "Failed to communicate with Spectre engine server pipelines.");
-        }
-    }
 
-    function showErrorBubble(container, errorText) {
-        const errorBubble = document.createElement("div");
-        errorBubble.className = "chat-bubble";
-        errorBubble.innerHTML = `<div class="ai-text" style="color: #ff5555;">⚠️ Error: ${errorText}</div>`;
-        container.appendChild(errorBubble);
-    }
+        saveAskHistory(queryText);
+        const initialOverview = {{ ai_overview | tojson | safe }};
+        const originalQuery = {{ query | tojson | safe }};
 
-    function escapeHtml(text) {
-        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        const askForm = document.createElement('form');
+        askForm.method = 'POST';
+        askForm.action = '/ask';
+        [
+            ['q', queryText],
+            ['context', initialOverview],
+            ['original_query', originalQuery]
+        ].forEach(([name, value]) => {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = name;
+            field.value = value;
+            askForm.appendChild(field);
+        });
+        document.body.appendChild(askForm);
+        askForm.submit();
     }
 
     const followupForm = document.getElementById("followup-form");

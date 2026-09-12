@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectre Ask</title>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.documentElement.classList.add('light-theme');
+            }
+        })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0d0f12;
+            --sidebar-bg: #111821;
+            --panel-bg: rgba(18, 22, 30, 0.92);
+            --card-bg: linear-gradient(145deg, #151d2a 0%, #0f131a 100%);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --input-bg: #131722;
+            --input-border: #242b38;
+            --text-primary: #f1f2f6;
+            --text-secondary: #8c9ba5;
+            --accent-color: #ffffff;
+            --search-icon-filter: brightness(0) invert(1);
+            --link-color: #74b9ff;
+            --danger-color: #ff7a7a;
+        }
+
+        html.light-theme {
+            --bg-color: #f8f9fa;
+            --sidebar-bg: #edf2f7;
+            --panel-bg: rgba(255, 255, 255, 0.96);
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --input-bg: #f1f5f9;
+            --input-border: #cbd5e1;
+            --text-primary: #1a202c;
+            --text-secondary: #64748b;
+            --accent-color: #000000;
+            --search-icon-filter: brightness(0);
+            --link-color: #1a0dab;
+            --danger-color: #df2e2e;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', sans-serif;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .ask-shell {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .ask-sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--card-border);
+            padding: 18px 14px 18px 18px;
+            position: relative;
+            transition: width 0.25s ease, transform 0.25s ease;
+            overflow: hidden;
+        }
+
+        .ask-sidebar.collapsed {
+            width: 68px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .sidebar-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            margin-bottom: 18px;
+            font-size: 1.1rem;
+        }
+
+        .ask-sidebar.collapsed .sidebar-toggle {
+            margin-left: 8px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            gap: 10px;
+        }
+
+        .sidebar-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .ask-sidebar.collapsed .sidebar-title,
+        .ask-sidebar.collapsed .history-list,
+        .ask-sidebar.collapsed .history-empty {
+            display: none;
+        }
+
+        .history-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .history-item {
+            display: block;
+            width: 100%;
+            border: 1px solid var(--card-border);
+            background: var(--panel-bg);
+            color: var(--text-primary);
+            border-radius: 12px;
+            padding: 10px 12px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.92rem;
+            line-height: 1.4;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+            text-decoration: none;
+        }
+
+        .history-item:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-1px);
+        }
+
+        .history-empty {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding: 12px 8px;
+            border: 1px dashed var(--card-border);
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .ask-main {
+            flex: 1;
+            padding: 26px 28px 120px;
+        }
+
+        .top-bar {
+            margin-bottom: 28px;
+        }
+
+        .logo {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: lowercase;
+            display: inline-block;
+        }
+
+        .ask-panel {
+            max-width: 980px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .ask-form {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--panel-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            padding: 8px 14px 8px 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .bottom-ask-form {
+            position: fixed;
+            left: 308px;
+            right: 28px;
+            bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--panel-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            padding: 8px 14px 8px 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            z-index: 20;
+            transition: left 0.25s ease, right 0.25s ease;
+        }
+
+        body.sidebar-collapsed .bottom-ask-form {
+            left: 96px;
+        }
+
+        .ask-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 1.04rem;
+            padding: 12px 8px;
+            outline: none;
+        }
+
+        .ask-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .ask-submit {
+            border: none;
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border-radius: 999px;
+            min-width: 96px;
+            height: 42px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0 18px;
+        }
+
+        .answer-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 12px 12px 12px 0;
+            padding: 22px 22px 18px;
+        }
+
+        .user-bubble-wrap {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .user-bubble {
+            max-width: 78%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px 12px 0 12px;
+            padding: 14px 16px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .user-label {
+            display: block;
+            font-size: 0.72rem;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            text-align: right;
+        }
+
+        .user-bubble-text {
+            font-size: 1rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .answer-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 12px;
+            margin-bottom: 18px;
+        }
+
+        .answer-badge {
+            display: inline-block;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            color: var(--accent-color);
+            padding: 6px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            letter-spacing: 1.3px;
+            font-weight: 700;
+        }
+
+        .answer-context {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        .answer-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+
+        .answer-text p {
+            margin: 0 0 12px;
+        }
+
+        .answer-text ul, .answer-text ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .answer-text li {
+            margin-bottom: 6px;
+        }
+
+        @media (max-width: 800px) {
+            .ask-shell {
+                flex-direction: column;
+            }
+
+            .ask-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--card-border);
+                padding-bottom: 14px;
+            }
+
+            .ask-sidebar.collapsed {
+                width: 100%;
+            }
+
+            .sidebar-title, .history-list, .history-empty {
+                display: block;
+            }
+
+            .ask-main {
+                padding-top: 18px;
+                padding-bottom: 110px;
+            }
+
+            .bottom-ask-form,
+            body.sidebar-collapsed .bottom-ask-form {
+                left: 18px;
+                right: 18px;
+                bottom: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ask-shell">
+        <aside class="ask-sidebar" id="ask-sidebar">
+            <div class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle history">☰</div>
+            <div class="sidebar-header">
+                <div class="sidebar-title">Ask History</div>
+            </div>
+            <ul class="history-list" id="ask-history-list"></ul>
+            <div class="history-empty" id="history-empty">No questions yet. Start by asking something.</div>
+        </aside>
+
+        <main class="ask-main">
+            <div class="top-bar">
+                <a href="/" class="logo">spectre Ask</a>
+            </div>
+
+            <div class="ask-panel">
+                {% if context %}
+                    <div class="answer-card" style="border-left-color: #8c9ba5;">
+                        <div class="answer-header">
+                            <span class="answer-badge">Earlier Search Result</span>
+                            <span class="answer-context">• Context from “{{ original_query or query }}”</span>
+                        </div>
+                        <div class="answer-text" id="earlier-result-text"></div>
+                    </div>
+                {% endif %}
+
+                {% if query and context %}
+                    <div class="user-bubble-wrap">
+                        <div class="user-bubble">
+                            <span class="user-label">YOU</span>
+                            <div class="user-bubble-text">{{ query }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if ai_overview %}
+                    <div class="answer-card">
+                        <div class="answer-header">
+                            <span class="answer-badge">Spectre Ask</span>
+                            <span class="answer-context">• Reply to “{{ query }}”</span>
+                        </div>
+                        <div class="answer-text" id="answer-text"></div>
+                    </div>
+                {% endif %}
+
+                <form class="bottom-ask-form" id="ask-form-bottom">
+                    <input type="text" id="ask-input-bottom" class="ask-input" name="q" placeholder="Ask anything..." autocomplete="off" required>
+                    <button type="submit" class="ask-submit">Ask</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.documentElement.classList.add('light-theme');
+        } else {
+            document.documentElement.classList.remove('light-theme');
+        }
+
+        const historyKey = 'spectreAskHistory';
+        const threadKey = 'spectreAskThread';
+        const sidebar = document.getElementById('ask-sidebar');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        const historyList = document.getElementById('ask-history-list');
+        const historyEmpty = document.getElementById('history-empty');
+        const bottomAskForm = document.getElementById('ask-form-bottom');
+        const bottomAskInput = document.getElementById('ask-input-bottom');
+        const contextValue = {{ context | tojson | safe }};
+        const originalValue = {{ original_query | tojson | safe }};
+        const latestQuery = {{ query | tojson | safe }};
+        const conversationKey = JSON.stringify([originalValue, contextValue]);
+
+        const earlierResultText = document.getElementById('earlier-result-text');
+        const answerText = document.getElementById('answer-text');
+        if (earlierResultText && contextValue) {
+            earlierResultText.innerHTML = marked.parse(contextValue);
+        }
+        if (answerText && {{ ai_overview | tojson | safe }}) {
+            answerText.innerHTML = marked.parse({{ ai_overview | tojson | safe }});
+        }
+
+        function getAskHistory() {
+            try {
+                return JSON.parse(localStorage.getItem(historyKey) || '[]');
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function getAskThread() {
+            if (localStorage.getItem(`${threadKey}:conversation`) !== conversationKey) {
+                return [];
+            }
+
+            try {
+                return JSON.parse(localStorage.getItem(threadKey) || '[]');
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function saveAskHistory(items) {
+            localStorage.setItem(historyKey, JSON.stringify(items.slice(0, 25)));
+        }
+
+        function saveAskThread(thread) {
+            localStorage.setItem(threadKey, JSON.stringify(thread.slice(-25)));
+            localStorage.setItem(`${threadKey}:conversation`, conversationKey);
+        }
+
+        function addToAskHistory(query) {
+            const text = query.trim();
+            if (!text) return;
+
+            const history = getAskHistory();
+            const filtered = history.filter(item => item !== text);
+            filtered.unshift(text);
+            saveAskHistory(filtered);
+            renderHistory();
+        }
+
+        function bootstrapThread() {
+            const savedConversationKey = localStorage.getItem(`${threadKey}:conversation`);
+            const currentThread = savedConversationKey === conversationKey ? getAskThread() : [];
+
+            if (currentThread.length > 0) return currentThread;
+
+            const seeded = [];
+            if (originalValue) seeded.push({ role: 'user', content: originalValue });
+            if (contextValue) seeded.push({ role: 'assistant', content: contextValue });
+            if (latestQuery && latestQuery !== originalValue) {
+                seeded.push({ role: 'user', content: latestQuery });
+            }
+
+            saveAskThread(seeded);
+            return seeded;
+        }
+
+        function escapeHtml(text) {
+            const element = document.createElement('div');
+            element.textContent = text;
+            return element.innerHTML;
+        }
+
+        function renderUserBubble(text) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'user-bubble-wrap';
+            wrapper.innerHTML = `
+                <div class="user-bubble">
+                    <span class="user-label">YOU</span>
+                    <div class="user-bubble-text">${escapeHtml(text)}</div>
+                </div>
+            `;
+            document.querySelector('.ask-panel').appendChild(wrapper);
+        }
+
+        function renderReplyCard(reply, promptText) {
+            const card = document.createElement('div');
+            card.className = 'answer-card';
+            card.innerHTML = `
+                <div class="answer-header">
+                    <span class="answer-badge">Spectre Ask</span>
+                    <span class="answer-context">• Reply to “${escapeHtml(promptText)}”</span>
+                </div>
+                <div class="answer-text">${marked.parse(reply)}</div>
+            `;
+            document.querySelector('.ask-panel').appendChild(card);
+            requestAnimationFrame(() => {
+                card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        }
+
+        async function submitAskQuery(input) {
+            const query = input.value.trim();
+            if (!query) return;
+
+            addToAskHistory(query);
+
+            let thread = getAskThread();
+            if (!thread.length) {
+                thread = bootstrapThread();
+            }
+            thread = thread.filter(item => item && item.content && item.content.trim());
+            thread.push({ role: 'user', content: query });
+            saveAskThread(thread);
+
+            const promptText = query;
+
+            renderUserBubble(query);
+            input.value = '';
+
+            try {
+                const response = await fetch('/api/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: query,
+                        context: contextValue,
+                        original_query: originalValue,
+                        thread: thread
+                    })
+                });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    const updatedThread = Array.isArray(result.thread) ? result.thread : thread;
+                    updatedThread.push({ role: 'assistant', content: result.reply });
+                    saveAskThread(updatedThread);
+                    renderReplyCard(result.reply, promptText);
+                } else {
+                    renderReplyCard(result.message || 'Something went wrong while generating the answer.', promptText);
+                }
+            } catch (error) {
+                renderReplyCard('Failed to reach the Spectre Ask engine.', promptText);
+            }
+        }
+
+        function renderHistory() {
+            const history = getAskHistory();
+            historyList.innerHTML = '';
+
+            if (!history.length) {
+                historyEmpty.style.display = 'block';
+                return;
+            }
+
+            historyEmpty.style.display = 'none';
+            history.forEach((item) => {
+                const li = document.createElement('li');
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'history-item';
+                button.textContent = item;
+                button.addEventListener('click', () => {
+                    const target = contextValue
+                        ? `/ask?q=${encodeURIComponent(item)}&context=${encodeURIComponent(contextValue)}&original_query=${encodeURIComponent(originalValue)}`
+                        : `/ask?q=${encodeURIComponent(item)}`;
+                    window.location.href = target;
+                });
+                li.appendChild(button);
+                historyList.appendChild(li);
+            });
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            document.body.classList.toggle('sidebar-collapsed', sidebar.classList.contains('collapsed'));
+        });
+
+        bottomAskForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            submitAskQuery(bottomAskInput);
+        });
+
+        renderHistory();
+    </script>
+</body>
+</html>
