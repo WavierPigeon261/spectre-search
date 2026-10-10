@@ -1,278 +1,1157 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="google-site-verification" content="ANaKBgc9zlIJMT0hhx0_swZda8FuPeviCsvpY7quA04" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spectre Search - Private Web Search</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-deep: #050b18;
-            --accent-cyan: #00f2fe;
-            --accent-blue: #4facfe;
-            --glass-bg: rgba(15, 23, 42, 0.55);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-glow: rgba(0, 242, 254, 0.12);
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <title>Spectre Technologies — Search Freely. Stay Private.</title>
+  <meta name="description" content="Discover Spectre Search, a privacy-focused search experience with AI-powered overviews and a clean, modern interface.">
 
-        body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-deep);
-            color: var(--text-primary);
-            line-height: 1.7;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            overflow-x: hidden;
-        }
+  <!-- Restore your original Google Search Console verification tag here. -->
 
-        /* Ambient Glow Background Spheres */
-        .glow-sphere-1 {
-            position: fixed;
-            top: -10%;
-            left: 20%;
-            width: 50vw;
-            height: 50vw;
-            max-width: 600px;
-            max-height: 600px;
-            background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(0,0,0,0) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-        }
+  <meta name="theme-color" content="#f8f9ff">
 
-        .glow-sphere-2 {
-            position: fixed;
-            bottom: -10%;
-            right: 20%;
-            width: 50vw;
-            height: 50vw;
-            max-width: 600px;
-            max-height: 600px;
-            background: radial-gradient(circle, rgba(79, 172, 254, 0.1) 0%, rgba(0,0,0,0) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-        /* Full Width Wrapper */
-        .page-wrapper {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 24px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
+  <style>
+    :root {
+      --background: #f8f9ff;
+      --surface: #ffffff;
+      --text: #15172b;
+      --muted: #686d83;
+      --primary: #5b55e7;
+      --primary-dark: #4942d0;
+      --border: #e9eaf4;
+      --shadow: 0 16px 50px rgba(41, 40, 100, 0.07);
+    }
 
-        header {
-            text-align: center;
-            margin-bottom: 48px;
-            padding: 20px 0;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        h1 {
-            font-size: clamp(2.2rem, 5vw, 3.5rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 12px;
-        }
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 90px;
+    }
 
-        .tagline {
-            font-size: clamp(1rem, 2vw, 1.25rem);
-            color: var(--text-secondary);
-            font-weight: 400;
-            margin-bottom: 36px;
-        }
+    body {
+      font-family: "Inter", sans-serif;
+      background: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-        /* Glass Glowing Button */
-        .btn-glow {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px 36px;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #050b18;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            border-radius: 50px;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 25px rgba(0, 242, 254, 0.35);
-        }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-        .btn-glow:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 35px rgba(0, 242, 254, 0.55);
-            filter: brightness(1.1);
-        }
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        /* Full-width Glass Panel for Content */
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 36px;
-            margin-bottom: 32px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin-inline: auto;
+    }
 
-        .glass-panel:hover {
-            border-color: rgba(0, 242, 254, 0.2);
-            box-shadow: 0 12px 45px rgba(0, 0, 0, 0.5), 0 0 25px var(--glass-glow);
-        }
+    /* Navigation */
 
-        .description {
-            font-size: clamp(1rem, 1.5vw, 1.15rem);
-            color: var(--text-secondary);
-            line-height: 1.8;
-            text-align: center;
-            max-width: 900px;
-            margin: 0 auto;
-        }
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(225, 227, 241, 0.8);
+    }
 
-        h2 {
-            font-size: 1.35rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            text-align: center;
-        }
+    .nav-inner {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
 
-        /* Vertical Stack Layout */
-        .features-list-vertical {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
+    /* Text-only brand */
 
-        .feature-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 20px 24px;
-            border-radius: 16px;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 6px;
-        }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      white-space: nowrap;
+    }
 
-        .feature-card:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(0, 242, 254, 0.2);
-            transform: translateY(-2px);
-        }
+    .brand-name {
+      color: #15172b;
+    }
 
-        .feature-card strong {
-            color: var(--accent-cyan);
-            font-weight: 600;
-            font-size: 1.05rem;
-            text-align: center;
-        }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
 
-        .feature-card span {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
+    .nav-links a:not(.nav-cta):hover {
+      color: var(--primary);
+    }
 
-        footer {
-            text-align: center;
-            padding: 24px 0;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            opacity: 0.7;
-            position: relative;
-            z-index: 1;
-        }
+    .nav-cta {
+      padding: 11px 19px;
+      border-radius: 11px;
+      color: white;
+      background: var(--primary);
+      transition: transform 0.2s, background 0.2s;
+    }
 
-        /* Mobile & Tablet Adjustments */
-        @media (max-width: 768px) {
-            .page-wrapper {
-                padding: 24px 16px;
-            }
+    .nav-cta:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
 
-            .glass-panel {
-                padding: 24px;
-                border-radius: 16px;
-            }
+    /* Hero */
 
-            header {
-                margin-bottom: 32px;
-            }
-        }
-    </style>
+    .hero {
+      position: relative;
+      isolation: isolate;
+      padding: 88px 0 78px;
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      border-radius: 50%;
+      filter: blur(2px);
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 390px;
+      height: 390px;
+      left: -210px;
+      top: 40px;
+      background: radial-gradient(
+        circle,
+        rgba(121, 116, 255, 0.13),
+        transparent 70%
+      );
+    }
+
+    .hero::after {
+      width: 500px;
+      height: 500px;
+      right: -220px;
+      top: 10px;
+      background: radial-gradient(
+        circle,
+        rgba(105, 182, 255, 0.16),
+        transparent 70%
+      );
+    }
+
+    .hero-content {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 13px;
+      margin-bottom: 25px;
+      border: 1px solid #e4e2ff;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.8);
+      color: #5952d9;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.35px;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      background: #756eff;
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px #eeedff;
+    }
+
+    h1 {
+      font-size: clamp(43px, 7vw, 76px);
+      line-height: 1.06;
+      letter-spacing: -4px;
+      font-weight: 800;
+    }
+
+    .gradient-text {
+      color: #5c55e8;
+      background: linear-gradient(
+        100deg,
+        #7169ff,
+        #5144d4 55%,
+        #398cda
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-description {
+      max-width: 570px;
+      margin: 23px auto 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.9;
+    }
+
+    .hero-actions {
+      margin-top: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 13px;
+    }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 23px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      transition: transform 0.22s, box-shadow 0.22s, background 0.22s;
+    }
+
+    .button-primary {
+      color: #fff;
+      background: linear-gradient(135deg, #716aff, #5148db);
+      box-shadow: 0 9px 22px rgba(91, 85, 231, 0.23);
+    }
+
+    .button-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 13px 27px rgba(91, 85, 231, 0.3);
+    }
+
+    .button-secondary {
+      color: #393b54;
+      background: rgba(255, 255, 255, 0.85);
+      border-color: #e4e5f0;
+    }
+
+    .button-secondary:hover {
+      transform: translateY(-2px);
+      background: white;
+      box-shadow: 0 7px 18px rgba(41, 40, 100, 0.06);
+    }
+
+    .button svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .hero-note {
+      margin-top: 19px;
+      font-size: 11px;
+      color: #85899b;
+    }
+
+    /* Actual Spectre Search screenshot */
+
+    .preview-wrap {
+      position: relative;
+      max-width: 900px;
+      margin: 58px auto 0;
+      padding: 0 14px;
+    }
+
+    .preview-glow {
+      position: absolute;
+      inset: 15% 10% -8%;
+      background: linear-gradient(100deg, #a49fff, #8ad8ff);
+      filter: blur(55px);
+      opacity: 0.24;
+      z-index: -1;
+      border-radius: 50%;
+    }
+
+    .search-screenshot {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid #e6e6f3;
+      border-radius: 21px;
+      background: #fff;
+      box-shadow: 0 26px 75px rgba(48, 46, 113, 0.13);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .search-screenshot:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 32px 85px rgba(48, 46, 113, 0.17);
+    }
+
+    /* Shared section styles */
+
+    .section {
+      padding: 75px 0;
+    }
+
+    .section-heading {
+      max-width: 650px;
+      margin: 0 auto 39px;
+      text-align: center;
+    }
+
+    .section-kicker {
+      display: inline-block;
+      margin-bottom: 11px;
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(29px, 4vw, 42px);
+      line-height: 1.2;
+      letter-spacing: -1.7px;
+      font-weight: 800;
+    }
+
+    .section-heading p {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.9;
+    }
+
+    /* About */
+
+    .about-section {
+      padding-top: 20px;
+    }
+
+    .about-panel {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      gap: 45px;
+      padding: clamp(27px, 5vw, 54px);
+      overflow: hidden;
+      border: 1px solid #e8e7f7;
+      border-radius: 24px;
+      background:
+        radial-gradient(
+          ellipse at 100% 0%,
+          rgba(122, 115, 255, 0.10),
+          transparent 48%
+        ),
+        linear-gradient(135deg, #fff, #fbfbff);
+      box-shadow: var(--shadow);
+    }
+
+    .about-copy h2 {
+      max-width: 410px;
+      font-size: clamp(27px, 4vw, 38px);
+      line-height: 1.2;
+      letter-spacing: -1.5px;
+    }
+
+    .about-copy p {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 2;
+    }
+
+    .about-visual {
+      min-height: 200px;
+      display: grid;
+      place-items: center;
+    }
+
+    .orbit {
+      position: relative;
+      width: 190px;
+      height: 190px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #e5e3ff;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        #f0efff 0%,
+        #fafaff 62%,
+        transparent 63%
+      );
+    }
+
+    .orbit::before,
+    .orbit::after {
+      content: "";
+      position: absolute;
+      inset: 19px;
+      border: 1px dashed #d4d1ff;
+      border-radius: 50%;
+    }
+
+    .orbit::after {
+      inset: -13px;
+      border-style: solid;
+      border-color: #ecebff;
+    }
+
+    .orbit-core {
+      width: 76px;
+      height: 76px;
+      display: grid;
+      place-items: center;
+      color: white;
+      border-radius: 25px;
+      background: linear-gradient(145deg, #7e77ff, #4f46d6);
+      box-shadow: 0 12px 32px rgba(91, 85, 231, 0.28);
+      z-index: 1;
+    }
+
+    .orbit-core svg {
+      width: 39px;
+      height: 39px;
+    }
+
+    .orbit-node {
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      color: #5c55dc;
+      border: 1px solid #e7e5ff;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 6px 18px rgba(41, 40, 100, 0.08);
+      z-index: 2;
+    }
+
+    .orbit-node svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .orbit-node.one { top: 0; left: 76px; }
+    .orbit-node.two { right: -1px; top: 78px; }
+    .orbit-node.three { bottom: 1px; left: 76px; }
+    .orbit-node.four { left: -1px; top: 78px; }
+
+    /* Features */
+
+    .features-section {
+      padding-top: 85px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 19px;
+    }
+
+    .feature-card {
+      position: relative;
+      padding: 27px 24px 25px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 6px 25px rgba(41, 40, 100, 0.025);
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: #d8d5ff;
+      box-shadow: 0 15px 38px rgba(41, 40, 100, 0.075);
+    }
+
+    .feature-icon {
+      width: 47px;
+      height: 47px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 23px;
+      border-radius: 14px;
+      color: #5b55df;
+      background: #f0efff;
+    }
+
+    .feature-icon svg {
+      width: 23px;
+      height: 23px;
+    }
+
+    .feature-card:nth-child(2) .feature-icon {
+      color: #277cc4;
+      background: #eaf5ff;
+    }
+
+    .feature-card:nth-child(3) .feature-icon {
+      color: #169a79;
+      background: #e7f9f2;
+    }
+
+    .feature-card h3 {
+      margin-bottom: 10px;
+      font-size: 16px;
+      font-weight: 750;
+      letter-spacing: -0.35px;
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.95;
+    }
+
+    .feature-number {
+      position: absolute;
+      top: 25px;
+      right: 24px;
+      color: #c6c7d7;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    /* Privacy panel */
+
+    .privacy-section {
+      padding: 26px 0 90px;
+    }
+
+    .privacy-panel {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 26px;
+      padding: 27px 31px;
+      border: 1px solid #e3e2fb;
+      border-radius: 19px;
+      background: linear-gradient(
+        110deg,
+        #f0efff,
+        #f6f8ff 70%,
+        #eff8ff
+      );
+    }
+
+    .privacy-copy {
+      display: flex;
+      align-items: center;
+      gap: 17px;
+    }
+
+    .privacy-icon {
+      width: 49px;
+      height: 49px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      color: #5b55df;
+      border-radius: 15px;
+      background: #fff;
+      box-shadow: 0 5px 15px rgba(70, 65, 160, 0.07);
+    }
+
+    .privacy-icon svg {
+      width: 25px;
+      height: 25px;
+    }
+
+    .privacy-copy h3 {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .privacy-copy p {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .privacy-link {
+      flex-shrink: 0;
+      color: #5750d7;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .privacy-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Footer */
+
+    footer {
+      border-top: 1px solid #e8e9f2;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .footer-inner {
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .footer-brand {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+    }
+
+    .footer-brand span {
+      color: var(--primary);
+    }
+
+    .footer-caption {
+      margin-top: 4px;
+      color: #898da0;
+      font-size: 11px;
+    }
+
+    .footer-right {
+      color: #898da0;
+      font-size: 11px;
+      text-align: right;
+    }
+
+    /* Responsive layouts */
+
+    @media (max-width: 760px) {
+      .nav-inner {
+        min-height: 68px;
+      }
+
+      .brand {
+        font-size: 18px;
+        letter-spacing: -0.6px;
+      }
+
+      .nav-links {
+        gap: 15px;
+      }
+
+      .nav-links .nav-about {
+        display: none;
+      }
+
+      .nav-cta {
+        padding: 10px 13px;
+        font-size: 11px;
+      }
+
+      .hero {
+        padding: 69px 0 60px;
+      }
+
+      h1 {
+        letter-spacing: -2.7px;
+      }
+
+      .hero-description {
+        font-size: 14px;
+      }
+
+      .preview-wrap {
+        margin-top: 45px;
+      }
+
+      .about-panel {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+
+      .about-copy {
+        text-align: center;
+      }
+
+      .about-copy h2 {
+        margin-inline: auto;
+      }
+
+      .about-visual {
+        min-height: 220px;
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .feature-card:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .privacy-panel {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .privacy-link {
+        padding-left: 66px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        width: calc(100% - 30px);
+      }
+
+      .brand {
+        font-size: 15px;
+        letter-spacing: -0.5px;
+      }
+
+      .nav-links {
+        gap: 0;
+      }
+
+      .nav-cta {
+        padding: 9px 10px;
+        font-size: 10px;
+      }
+
+      .hero {
+        padding-top: 55px;
+      }
+
+      .eyebrow {
+        font-size: 9px;
+      }
+
+      h1 {
+        font-size: 45px;
+        letter-spacing: -2.5px;
+      }
+
+      .hero-description {
+        font-size: 13px;
+        line-height: 1.85;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+        max-width: 270px;
+        margin-inline: auto;
+        margin-top: 25px;
+      }
+
+      .button {
+        width: 100%;
+      }
+
+      .preview-wrap {
+        padding: 0;
+        margin-top: 40px;
+      }
+
+      .search-screenshot {
+        border-radius: 14px;
+      }
+
+      .section {
+        padding: 58px 0;
+      }
+
+      .section-heading {
+        margin-bottom: 28px;
+      }
+
+      .section-heading h2 {
+        letter-spacing: -1px;
+      }
+
+      .section-heading p {
+        font-size: 12px;
+      }
+
+      .about-panel {
+        padding: 27px 20px;
+      }
+
+      .about-copy p {
+        font-size: 12px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 13px;
+      }
+
+      .feature-card,
+      .feature-card:last-child {
+        grid-column: auto;
+        padding: 23px;
+      }
+
+      .feature-icon {
+        margin-bottom: 17px;
+      }
+
+      .privacy-section {
+        padding-bottom: 60px;
+      }
+
+      .privacy-panel {
+        padding: 22px 19px;
+      }
+
+      .privacy-copy {
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .privacy-copy p {
+        font-size: 11px;
+      }
+
+      .privacy-link {
+        padding-left: 61px;
+      }
+
+      .footer-inner {
+        padding: 23px 0;
+        min-height: auto;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 13px;
+      }
+
+      .footer-right {
+        text-align: left;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-    <div class="glow-sphere-1"></div>
-    <div class="glow-sphere-2"></div>
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a class="brand" href="#" aria-label="Spectre Technologies home">
+        <span class="brand-name">Spectre Technologies</span>
+      </a>
 
-    <div class="page-wrapper">
-        <header>
-            <h1>Spectre Search</h1>
-            <p class="tagline">Search the web privately with no tracking.</p>
-            <a href="https://spectresearch.vercel.app" target="_blank" rel="noopener noreferrer" class="btn-glow">
-                Click to open Spectre Search
-            </a>
-        </header>
-
-        <section class="glass-panel">
-            <p class="description">
-                Spectre Search is a lightweight, privacy-focused search tool designed to deliver clean results and instant answers without tracking your activity. Built with speed and minimalism in mind, it gives you a fast, clutter-free search experience while keeping your data completely private.
-            </p>
-        </section>
-
-        <section class="glass-panel">
-            <h2>⚙️ How It Works</h2>
-            <div class="features-list-vertical">
-                <div class="feature-card">
-                    <strong>DuckDuckGo Data Fetching</strong>
-                    <span>Queries are proxied directly to DuckDuckGo to extract search results without collecting user logs, personal identifiers, or IP addresses.</span>
-                </div>
-                <div class="feature-card">
-                    <strong>Groq AI Overviews</strong>
-                    <span>Search queries are processed through Groq's high-speed LLM infrastructure to generate real-time AI summaries and answer overviews.</span>
-                </div>
-                <div class="feature-card">
-                    <strong>Custom HTML/CSS UI</strong>
-                    <span>The frontend is built using clean, lightweight HTML, CSS, and JavaScript for a responsive and distraction-free dark-mode layout.</span>
-                </div>
-            </div>
-        </section>
-
-        <footer>
-            <p>© Spectre Technologies. All rights reserved.</p>
-        </footer>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a class="nav-about" href="#about">About</a>
+        <a class="nav-about" href="#features">Features</a>
+        <a class="nav-cta" href="https://spectresearch.vercel.app">
+          Launch Search <span aria-hidden="true">↗</span>
+        </a>
+      </nav>
     </div>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            A DIFFERENT WAY TO EXPLORE THE WEB
+          </div>
+
+          <h1>
+            Search freely.<br>
+            <span class="gradient-text">Stay private.</span>
+          </h1>
+
+          <p class="hero-description">
+            Meet Spectre Search — a clean, modern search experience
+            designed to help you discover the web with AI-powered
+            overviews and a focus on privacy.
+          </p>
+
+          <div class="hero-actions">
+            <a class="button button-primary"
+               href="https://spectresearch.vercel.app">
+              Start Searching
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round"
+                   stroke-linejoin="round" aria-hidden="true">
+                <path d="M7 17 17 7"></path>
+                <path d="M7 7h10v10"></path>
+              </svg>
+            </a>
+
+            <a class="button button-secondary" href="#features">
+              Explore Features
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round"
+                   stroke-linejoin="round" aria-hidden="true">
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
+            </a>
+          </div>
+
+          <p class="hero-note">
+            A simpler interface. A fresh perspective on search.
+          </p>
+        </div>
+
+        <!-- Your actual Spectre Search screenshot -->
+        <div class="preview-wrap">
+          <div class="preview-glow"></div>
+
+          <img
+            class="search-screenshot"
+            src="/static/images/spectre-search-img.png"
+            alt="Screenshot of the Spectre Search engine interface"
+            loading="eager"
+            fetchpriority="high"
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="section about-section" id="about">
+      <div class="container">
+        <div class="about-panel">
+          <div class="about-copy">
+            <span class="section-kicker">Meet Spectre</span>
+            <h2>Your gateway to a more thoughtful web.</h2>
+
+            <p>
+              Spectre Search brings web discovery and AI-assisted
+              summaries together in one streamlined experience.
+              Its custom interface is designed to keep searching
+              simple, clear, and easy to use.
+            </p>
+
+            <p>
+              No unnecessary clutter. Just a fresh way to explore
+              information and follow your curiosity.
+            </p>
+          </div>
+
+          <div class="about-visual" aria-hidden="true">
+            <div class="orbit">
+              <div class="orbit-core">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.8" stroke-linecap="round"
+                     stroke-linejoin="round">
+                  <circle cx="10.8" cy="10.8" r="6.8"></circle>
+                  <path d="m16 16 4.5 4.5"></path>
+                  <path d="M8.3 10.8h5"></path>
+                  <path d="M10.8 8.3v5"></path>
+                </svg>
+              </div>
+
+              <span class="orbit-node one">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round"
+                     stroke-linejoin="round">
+                  <path d="m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3L12 3Z"></path>
+                </svg>
+              </span>
+
+              <span class="orbit-node two">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round"
+                     stroke-linejoin="round">
+                  <path d="M4 5h16v14H4z"></path>
+                  <path d="M8 9h8M8 13h5"></path>
+                </svg>
+              </span>
+
+              <span class="orbit-node three">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round"
+                     stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path>
+                </svg>
+              </span>
+
+              <span class="orbit-node four">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round"
+                     stroke-linejoin="round">
+                  <path d="M12 3 4.5 6v5.5c0 4.5 3.2 7.8 7.5 9.5 4.3-1.7 7.5-5 7.5-9.5V6L12 3Z"></path>
+                  <path d="m9 12 2 2 4-4"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section features-section" id="features">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-kicker">Built with purpose</span>
+          <h2>Everything starts with a search.</h2>
+          <p>
+            A focused combination of web results, AI assistance,
+            and a custom-built interface.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <article class="feature-card">
+            <span class="feature-number">01</span>
+
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round"
+                   stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m16 16 4 4"></path>
+                <path d="M8 11h6"></path>
+              </svg>
+            </div>
+
+            <h3>Web Search</h3>
+            <p>
+              Discover relevant web pages through a search experience
+              designed around simplicity and clarity.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-number">02</span>
+
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round"
+                   stroke-linejoin="round" aria-hidden="true">
+                <path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-2-5.8L4 11l6-2.2L12 3Z"></path>
+                <path d="m19 16 .9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9L19 16Z"></path>
+              </svg>
+            </div>
+
+            <h3>AI Overviews</h3>
+            <p>
+              Get AI-generated overviews powered by Groq, helping
+              you explore a topic before diving deeper.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-number">03</span>
+
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round"
+                   stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="3"></rect>
+                <path d="M3 9h18M8 4v5"></path>
+                <path d="m8 14 2 2 4-4"></path>
+              </svg>
+            </div>
+
+            <h3>Custom Interface</h3>
+            <p>
+              A purpose-built HTML and CSS experience with a clean
+              layout that keeps the focus on your search.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy -->
+    <section class="privacy-section">
+      <div class="container">
+        <div class="privacy-panel">
+          <div class="privacy-copy">
+            <div class="privacy-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round"
+                   stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3 4.5 6v5.5c0 4.5 3.2 7.8 7.5 9.5 4.3-1.7 7.5-5 7.5-9.5V6L12 3Z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+            </div>
+
+            <div>
+              <h3>Privacy deserves a place in search.</h3>
+              <p>
+                Spectre is built around a privacy-focused approach.
+                Check the search service's current privacy practices
+                for details on data handling.
+              </p>
+            </div>
+          </div>
+
+          <a class="privacy-link"
+             href="https://spectresearch.vercel.app">
+            Explore Spectre <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <div>
+        <div class="footer-brand">Spectre <span>Search</span></div>
+        <p class="footer-caption">Search freely. Stay private.</p>
+      </div>
+
+      <div class="footer-right">
+        <p>© <span id="year"></span> Spectre Technologies.</p>
+        <p>Made for curious minds.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
+  </script>
 
 </body>
 </html>
