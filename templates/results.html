@@ -334,9 +334,11 @@
                 </div>
 
                 <div class="followup-wrapper">
-                    <form id="followup-form" class="followup-form">
-                        <input type="text" id="followup-input" class="followup-input" placeholder="Ask a follow-up question..." autocomplete="off" required>
-                        <button type="button" class="followup-btn" id="followup-submit-btn">➔</button>
+                    <form id="followup-form" class="followup-form" method="POST" action="/ask">
+                        <input type="hidden" name="context" value="{{ ai_overview }}">
+                        <input type="hidden" name="original_query" value="{{ query }}">
+                        <input type="text" id="followup-input" class="followup-input" name="q" placeholder="Ask a follow-up question..." autocomplete="off" required>
+                        <button type="submit" class="followup-btn">➔</button>
                     </form>
                 </div>
             </div>
@@ -345,15 +347,17 @@
         {% if search_results %}
             {% for item in search_results %}
                 <div class="result-item">
-                    <a class="result-title" href="{{ item.link }}" target="_blank">{{ item.title }}</a>
+                    <a class="result-title" href="{{ item.link }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
                     <span class="result-url">{{ item.link }}</span>
                     <div class="result-snippet">{{ item.snippet }}</div>
                 </div>
             {% endfor %}
         {% else %}
-            <p>No clean privacy links could be pulled for this specific query phrase.</p>
+            <p>{{ search_error or "No clean privacy links could be pulled for this specific query phrase." }}</p>
         {% endif %}
     </div>
+
+    <script src="/static/js/safe-markdown.js"></script>
 
     <script>
     // 1. Initialize Theme from localStorage
@@ -372,7 +376,7 @@
         const initialText = {{ ai_overview | tojson | safe }};
         const initialBox = document.getElementById("initial-ai-overview");
         if (initialBox && initialText) {
-            initialBox.innerHTML = marked.parse(initialText);
+            renderSafeMarkdown(initialBox, initialText);
         }
     });
 
@@ -383,41 +387,15 @@
         localStorage.setItem('spectreAskHistory', JSON.stringify(filtered.slice(0, 25)));
     }
 
-    function submitFollowUp(event) {
-        event.preventDefault();
-
+    function recordFollowUp() {
         const inputElement = document.getElementById("followup-input");
         const queryText = inputElement.value.trim();
 
-        if (!queryText) return;
-
-        saveAskHistory(queryText);
-        const initialOverview = {{ ai_overview | tojson | safe }};
-        const originalQuery = {{ query | tojson | safe }};
-
-        const askForm = document.createElement('form');
-        askForm.method = 'POST';
-        askForm.action = '/ask';
-        [
-            ['q', queryText],
-            ['context', initialOverview],
-            ['original_query', originalQuery]
-        ].forEach(([name, value]) => {
-            const field = document.createElement('input');
-            field.type = 'hidden';
-            field.name = name;
-            field.value = value;
-            askForm.appendChild(field);
-        });
-        document.body.appendChild(askForm);
-        askForm.submit();
+        if (queryText) saveAskHistory(queryText);
     }
 
     const followupForm = document.getElementById("followup-form");
-    const followupSubmitBtn = document.getElementById("followup-submit-btn");
-
-    if (followupForm) followupForm.addEventListener("submit", submitFollowUp);
-    if (followupSubmitBtn) followupSubmitBtn.addEventListener("click", submitFollowUp);
+    if (followupForm) followupForm.addEventListener("submit", recordFollowUp);
     </script>
 
     <script src="/static/js/search-history.js"></script>

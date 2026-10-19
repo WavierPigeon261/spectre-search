@@ -4,3 +4,5 @@ Allow: /templates/backgrounds/image.png
 
 Disallow: /templates/backgrounds/
 Disallow: /api/
+
+# Crawler guidance only; this file does not restrict access to these routes.

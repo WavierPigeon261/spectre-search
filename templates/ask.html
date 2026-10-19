@@ -13,6 +13,7 @@
         })();
     </script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="/static/js/safe-markdown.js"></script>
     <style>
         :root {
             --bg-color: #0d0f12;
@@ -442,10 +443,10 @@
         const earlierResultText = document.getElementById('earlier-result-text');
         const answerText = document.getElementById('answer-text');
         if (earlierResultText && contextValue) {
-            earlierResultText.innerHTML = marked.parse(contextValue);
+            renderSafeMarkdown(earlierResultText, contextValue);
         }
         if (answerText && {{ ai_overview | tojson | safe }}) {
-            answerText.innerHTML = marked.parse({{ ai_overview | tojson | safe }});
+            renderSafeMarkdown(answerText, {{ ai_overview | tojson | safe }});
         }
 
         function getAskHistory() {
@@ -526,13 +527,20 @@
         function renderReplyCard(reply, promptText) {
             const card = document.createElement('div');
             card.className = 'answer-card';
-            card.innerHTML = `
-                <div class="answer-header">
-                    <span class="answer-badge">Spectre Ask</span>
-                    <span class="answer-context">• Reply to “${escapeHtml(promptText)}”</span>
-                </div>
-                <div class="answer-text">${marked.parse(reply)}</div>
-            `;
+            const header = document.createElement('div');
+            header.className = 'answer-header';
+            const badge = document.createElement('span');
+            badge.className = 'answer-badge';
+            badge.textContent = 'Spectre Ask';
+            const context = document.createElement('span');
+            context.className = 'answer-context';
+            context.textContent = `• Reply to “${promptText}”`;
+            header.append(badge, context);
+
+            const text = document.createElement('div');
+            text.className = 'answer-text';
+            renderSafeMarkdown(text, reply);
+            card.append(header, text);
             document.querySelector('.ask-panel').appendChild(card);
             requestAnimationFrame(() => {
                 card.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -551,6 +559,7 @@
             }
             thread = thread.filter(item => item && item.content && item.content.trim());
             thread.push({ role: 'user', content: query });
+            thread = thread.slice(-25);
             saveAskThread(thread);
 
             const promptText = query;
