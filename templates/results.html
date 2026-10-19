@@ -333,14 +333,16 @@
                     <div class="spinner"></div> Spectre is synthesizing response...
                 </div>
 
-                <div class="followup-wrapper">
-                    <form id="followup-form" class="followup-form" method="POST" action="/ask">
-                        <input type="hidden" name="context" value="{{ ai_overview }}">
-                        <input type="hidden" name="original_query" value="{{ query }}">
-                        <input type="text" id="followup-input" class="followup-input" name="q" placeholder="Ask a follow-up question..." autocomplete="off" required>
-                        <button type="submit" class="followup-btn">➔</button>
-                    </form>
-                </div>
+                {% if show_followups %}
+                    <div class="followup-wrapper">
+                        <form id="followup-form" class="followup-form" method="POST" action="/ask">
+                            <input type="hidden" name="context" value="{{ ai_overview }}">
+                            <input type="hidden" name="original_query" value="{{ query }}">
+                            <input type="text" id="followup-input" class="followup-input" name="q" placeholder="Ask a follow-up question..." autocomplete="off" required>
+                            <button type="submit" class="followup-btn">➔</button>
+                        </form>
+                    </div>
+                {% endif %}
             </div>
         {% endif %}
 
@@ -381,6 +383,7 @@
     });
 
     function saveAskHistory(queryText) {
+        if (window.SpectreSettings && !window.SpectreSettings.isAskHistoryEnabled()) return;
         const history = JSON.parse(localStorage.getItem('spectreAskHistory') || '[]');
         const filtered = history.filter(item => item !== queryText);
         filtered.unshift(queryText);
@@ -398,6 +401,7 @@
     if (followupForm) followupForm.addEventListener("submit", recordFollowUp);
     </script>
 
+    <script src="/static/js/search-settings.js"></script>
     <script src="/static/js/search-history.js"></script>
 
 </body>

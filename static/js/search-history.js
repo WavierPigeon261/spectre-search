@@ -17,6 +17,15 @@ class SearchHistory {
         }
     }
 
+    canSaveHistory() {
+        return !window.SpectreSettings || window.SpectreSettings.isSearchHistoryEnabled();
+    }
+
+    canShowSuggestions() {
+        return this.canSaveHistory()
+            && (!window.SpectreSettings || window.SpectreSettings.areSuggestionsEnabled());
+    }
+
     init() {
         // Load history on page load
         this.loadHistory();
@@ -33,12 +42,20 @@ class SearchHistory {
                 this.hideDropdown();
             }
         });
+        window.addEventListener('spectre:settings-changed', () => {
+            if (!this.canShowSuggestions()) this.hideDropdown();
+        });
+        window.addEventListener('spectre:history-cleared', () => this.hideDropdown());
     }
 
     /**
      * Handle input event - filter and display suggestions
      */
     onInput(event) {
+        if (!this.canShowSuggestions()) {
+            this.hideDropdown();
+            return;
+        }
         const query = event.target.value.trim();
         
         if (query.length === 0) {
@@ -189,7 +206,7 @@ class SearchHistory {
         // Submit the form
         const form = this.input.closest('form');
         if (form) {
-            form.submit();
+            form.requestSubmit();
         }
     }
 
@@ -197,7 +214,7 @@ class SearchHistory {
      * Save query to history
      */
     addToHistory(query) {
-        if (!query || query.trim().length === 0) return;
+        if (!this.canSaveHistory() || !query || query.trim().length === 0) return;
 
         let history = this.getHistory();
         
@@ -226,8 +243,15 @@ class SearchHistory {
      * Get all history from localStorage
      */
     getHistory() {
+        if (!this.canSaveHistory()) return [];
         const stored = localStorage.getItem(this.storageKey);
-        return stored ? JSON.parse(stored) : [];
+        if (!stored) return [];
+        try {
+            const history = JSON.parse(stored);
+            return Array.isArray(history) ? history.filter(item => typeof item === 'string') : [];
+        } catch {
+            return [];
+        }
     }
 
     /**
@@ -256,6 +280,7 @@ class SearchHistory {
      * Show dropdown
      */
     showDropdown() {
+        if (!this.canShowSuggestions()) return;
         this.dropdown.style.display = 'block';
     }
 

@@ -23,6 +23,19 @@
     animation: slideDown 0.2s ease-out;
 }
 
+html.compact-results .result-item {
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+}
+
 /* Explicit fallback for dark mode */
 @media (prefers-color-scheme: dark) {
     #search-history-dropdown {

@@ -16,6 +16,19 @@ MAX_THREAD_MESSAGES = 25
 MAX_MESSAGE_LENGTH = 8_000
 MAX_THREAD_LENGTH = 24_000
 AI_MODEL = "openai/gpt-oss-120b"
+SAFE_SEARCH_MODES = {"off": "-2", "moderate": "1", "strict": "-1"}
+SEARCH_REGIONS = {
+    "world": "wt-wt",
+    "us": "us-en",
+    "uk": "uk-en",
+    "ca": "ca-en",
+    "au": "au-en",
+    "de": "de-de",
+    "fr": "fr-fr",
+    "es": "es-es",
+    "in": "in-en",
+}
+RESULT_LIMITS = {10, 20, 30}
 
 # --- RENDER TO VERCEL REDIRECT LOGIC ---
 @app.before_request
@@ -86,9 +99,15 @@ def provider_error_response():
     return jsonify({"status": "error", "message": "The AI provider is temporarily unavailable."}), 502
 
 
-def generate_rag_summary():
+def generate_rag_summary(answer_style):
+    style_instruction = (
+        "Give a concise overview in a short paragraph and a few key points."
+        if answer_style == "concise"
+        else "Give a detailed, well-structured overview with useful context and key points."
+    )
     system_prompt = (
         f"You are Spectre AI, developed by Spectre Technologies. Provide a precise, high-quality answer to the user's inquiry.\n\n"
+        f"{style_instruction}\n"
         f"Rules:\n"
         f"1. Start with a single, concise paragraph of exactly 6 lines or fewer.\n"
         f"2. If applicable, provide 4 to 5 bullet points below the paragraph for key details, one by one on each line.\n"
@@ -159,10 +178,41 @@ def search():
         return render_template("index.html")
     if len(query) > MAX_QUERY_LENGTH:
         abort(400, description=f"Search queries must be at most {MAX_QUERY_LENGTH} characters.")
+
+    safe_search = request.args.get("safe_search", "moderate")
+    region = request.args.get("region", "world")
+    result_limit_raw = request.args.get("result_limit", "10")
+    ai_overviews = request.args.get("ai_overviews", "on")
+    answer_style = request.args.get("answer_style", "concise")
+    show_followups = request.args.get("show_followups", "on")
+
+    if safe_search not in SAFE_SEARCH_MODES or region not in SEARCH_REGIONS:
+        abort(400, description="Invalid search preferences.")
+    try:
+        result_limit = int(result_limit_raw)
+    except ValueError:
+        abort(400, description="Invalid result limit.")
+    if result_limit not in RESULT_LIMITS:
+        abort(400, description="Invalid result limit.")
+    if (
+        ai_overviews not in {"on", "off"}
+        or answer_style not in {"concise", "detailed"}
+        or show_followups not in {"on", "off"}
+    ):
+        abort(400, description="Invalid AI preferences.")
     
     ddg_url = "https://html.duckduckgo.com/html/"
     try:
-        response = requests.post(ddg_url, data={'q': query}, headers=HEADERS, timeout=10)
+        response = requests.post(
+            ddg_url,
+            data={
+                "q": query,
+                "kp": SAFE_SEARCH_MODES[safe_search],
+                "kl": SEARCH_REGIONS[region],
+            },
+            headers=HEADERS,
+            timeout=10,
+        )
         response.raise_for_status()
     except requests.RequestException:
         app.logger.exception("DuckDuckGo search request failed")
@@ -172,6 +222,7 @@ def search():
             search_results=[],
             ai_overview="",
             search_error="Search results are temporarily unavailable. Please try again.",
+            show_followups=show_followups == "on",
         ), 502
     soup = BeautifulSoup(response.text, "html.parser")
     
@@ -187,33 +238,39 @@ def search():
             s_text = snip.text.strip() if snip else ""
             search_results.append({"title": title.text.strip(), "link": link, "snippet": s_text})
             if s_text: snippets.append(s_text)
+
+    search_results = search_results[:result_limit]
+    snippets = snippets[:4]
             
     # Assemble the dynamic search rules combined with current web findings
-    system_instruction = generate_rag_summary()
-    search_context = "\n".join(f"- {snippet}" for snippet in snippets[:4]) or "No specific web context found."
-    client = get_groq_client()
-    
-    if client is None:
-        ai_overview = "AI overview is unavailable because the AI provider is not configured."
-    else:
-        try:
-            chat_completion = client.chat.completions.create(
-                messages=[
-                    {"role": "system", "content": system_instruction},
-                    {"role": "user", "content": f"Question: {query}\n\nUntrusted web search results:\n{search_context}"}
-                ],
-                model=AI_MODEL,
-            )
-            ai_overview = chat_completion.choices[0].message.content or ""
-        except APIError:
-            app.logger.exception("Groq search overview request failed")
-            ai_overview = "The AI overview is temporarily unavailable. Please try again."
+    ai_overview = ""
+    if ai_overviews == "on":
+        system_instruction = generate_rag_summary(answer_style)
+        search_context = "\n".join(f"- {snippet}" for snippet in snippets) or "No specific web context found."
+        client = get_groq_client()
+
+        if client is None:
+            ai_overview = "AI overview is unavailable because the AI provider is not configured."
+        else:
+            try:
+                chat_completion = client.chat.completions.create(
+                    messages=[
+                        {"role": "system", "content": system_instruction},
+                        {"role": "user", "content": f"Question: {query}\n\nUntrusted web search results:\n{search_context}"}
+                    ],
+                    model=AI_MODEL,
+                )
+                ai_overview = chat_completion.choices[0].message.content or ""
+            except APIError:
+                app.logger.exception("Groq search overview request failed")
+                ai_overview = "The AI overview is temporarily unavailable. Please try again."
         
     return render_template(
         "results.html", 
         query=query, 
         search_results=search_results, 
         ai_overview=ai_overview,
+        show_followups=show_followups == "on",
     )
 
 

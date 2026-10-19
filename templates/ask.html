@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spectre Ask</title>
+    <script src="/static/js/search-settings.js"></script>
     <script>
         (function() {
             const savedTheme = localStorage.getItem('theme');
@@ -363,6 +364,14 @@
                 bottom: 14px;
             }
         }
+
+        html.reduce-motion *,
+        html.reduce-motion *::before,
+        html.reduce-motion *::after {
+            scroll-behavior: auto !important;
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
     </style>
 </head>
 <body>
@@ -439,6 +448,7 @@
         const originalValue = {{ original_query | tojson | safe }};
         const latestQuery = {{ query | tojson | safe }};
         const conversationKey = JSON.stringify([originalValue, contextValue]);
+        let unsavedThread = null;
 
         const earlierResultText = document.getElementById('earlier-result-text');
         const answerText = document.getElementById('answer-text');
@@ -450,14 +460,21 @@
         }
 
         function getAskHistory() {
+            if (window.SpectreSettings && !window.SpectreSettings.isAskHistoryEnabled()) {
+                return [];
+            }
             try {
-                return JSON.parse(localStorage.getItem(historyKey) || '[]');
+                const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+                return Array.isArray(history) ? history.filter(item => typeof item === 'string') : [];
             } catch (error) {
                 return [];
             }
         }
 
         function getAskThread() {
+            if (window.SpectreSettings && !window.SpectreSettings.isAskHistoryEnabled()) {
+                return unsavedThread || [];
+            }
             if (localStorage.getItem(`${threadKey}:conversation`) !== conversationKey) {
                 return [];
             }
@@ -470,10 +487,15 @@
         }
 
         function saveAskHistory(items) {
+            if (window.SpectreSettings && !window.SpectreSettings.isAskHistoryEnabled()) return;
             localStorage.setItem(historyKey, JSON.stringify(items.slice(0, 25)));
         }
 
         function saveAskThread(thread) {
+            if (window.SpectreSettings && !window.SpectreSettings.isAskHistoryEnabled()) {
+                unsavedThread = thread.slice(-25);
+                return;
+            }
             localStorage.setItem(threadKey, JSON.stringify(thread.slice(-25)));
             localStorage.setItem(`${threadKey}:conversation`, conversationKey);
         }
@@ -490,6 +512,9 @@
         }
 
         function bootstrapThread() {
+            if (window.SpectreSettings && !window.SpectreSettings.isAskHistoryEnabled() && unsavedThread) {
+                return unsavedThread;
+            }
             const savedConversationKey = localStorage.getItem(`${threadKey}:conversation`);
             const currentThread = savedConversationKey === conversationKey ? getAskThread() : [];
 
@@ -631,6 +656,10 @@
         });
 
         renderHistory();
+        window.addEventListener('spectre:ask-data-cleared', renderHistory);
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'spectreSettings') renderHistory();
+        });
     </script>
 </body>
 </html>

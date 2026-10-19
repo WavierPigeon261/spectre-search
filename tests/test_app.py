@@ -90,6 +90,75 @@ class AppRouteTests(unittest.TestCase):
         self.assertNotIn(b"javascript:", response.data)
         self.assertIn(b"https://example.com", response.data)
 
+    def test_search_settings_are_applied_and_ai_can_be_disabled(self):
+        ddg_response = Mock()
+        ddg_response.text = "".join(
+            f'<div class="result__body"><a class="result__url" href="https://example.com/{i}">Result {i}</a></div>'
+            for i in range(25)
+        )
+        groq_client = Mock()
+
+        with (
+            patch.object(app_module.requests, "post", return_value=ddg_response) as post,
+            patch.object(app_module, "get_groq_client", return_value=groq_client) as get_client,
+        ):
+            response = self.client.get(
+                "/search?q=testing&safe_search=strict&region=in&result_limit=20"
+                "&ai_overviews=off&show_followups=off"
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(post.call_args.kwargs["data"], {"q": "testing", "kp": "-1", "kl": "in-en"})
+        self.assertEqual(response.data.count(b'class="result-item"'), 20)
+        self.assertNotIn(b"Spectre AI Overview", response.data)
+        self.assertNotIn(b'id="followup-form"', response.data)
+        get_client.assert_not_called()
+
+    def test_search_rejects_unsupported_preferences(self):
+        with patch.object(app_module.requests, "post") as post:
+            response = self.client.get("/search?q=testing&region=not-a-region")
+
+        self.assertEqual(response.status_code, 400)
+        post.assert_not_called()
+
+    def test_search_can_hide_followups_without_hiding_ai_overview(self):
+        ddg_response = Mock()
+        ddg_response.text = (
+            '<div class="result__body"><a class="result__url" href="https://example.com">Result</a></div>'
+        )
+        provider = Mock()
+        provider.chat.completions.create.return_value = SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(content="A concise answer."))]
+        )
+
+        with (
+            patch.object(app_module.requests, "post", return_value=ddg_response),
+            patch.object(app_module, "get_groq_client", return_value=provider),
+        ):
+            response = self.client.get("/search?q=testing&show_followups=off")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Spectre AI Overview", response.data)
+        self.assertNotIn(b'id="followup-form"', response.data)
+
+    def test_detailed_answer_style_is_applied_to_ai_prompt(self):
+        ddg_response = Mock()
+        ddg_response.text = ""
+        provider = Mock()
+        provider.chat.completions.create.return_value = SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(content="A detailed answer."))]
+        )
+
+        with (
+            patch.object(app_module.requests, "post", return_value=ddg_response),
+            patch.object(app_module, "get_groq_client", return_value=provider),
+        ):
+            response = self.client.get("/search?q=testing&answer_style=detailed")
+
+        self.assertEqual(response.status_code, 200)
+        messages = provider.chat.completions.create.call_args.kwargs["messages"]
+        self.assertIn("detailed, well-structured overview", messages[0]["content"])
+
     def test_ask_context_is_a_conversation_message_not_system_text(self):
         provider = Mock()
         provider.chat.completions.create.return_value = SimpleNamespace(
