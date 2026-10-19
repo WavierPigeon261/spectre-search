@@ -1,4 +1,4 @@
-**Spectre Search - a lightweight web search and AI-answer interface.**
+**Spectre Search - Search the web privately with no tracking.**
 
 ---
 <!--![Service Down](https://img.shields.io/badge/service-down-red?style=for-the-badge) -->
@@ -9,21 +9,18 @@
 
 ---
 
-Spectre Search is a lightweight search and AI-answer application. Search queries are sent from the server to DuckDuckGo, and AI prompts and any supplied conversation context are sent to Groq when AI answers are enabled. The app does not guarantee anonymity or control providers' retention and processing practices; review their current privacy policies before use.
+Spectre Search is a lightweight, privacy-focused search tool designed to deliver clean results and instant answers. Built for speed and minimalism, it gives you a fast, clutter-free search experience with your privacy in mind.
 
 ---
 
 ## ⚙️ How It Works
 
-* **Web search:** The Flask server requests HTML search results from DuckDuckGo.
-* **AI answers:** When `GROQ_API_KEY` is configured, search snippets and questions are sent to Groq to generate answers.
-* **Browser storage:** Search and Ask history and Ask conversation threads are stored in the browser's `localStorage`. They are not synchronized by this app but remain on the device until cleared.
-* **Hosting:** The hosting provider necessarily handles incoming network requests. Consult its privacy and logging settings before deploying.
+* **DuckDuckGo Data Fetching:** Search queries are sent to DuckDuckGo to retrieve web results.
+* **Groq AI Overviews:** When AI overviews are enabled, questions and search-result snippets are sent to Groq to generate summaries and answers.
+* **Custom HTML/CSS UI:** A clean, lightweight interface with responsive layouts and dark/light mode.
 
-## Run locally
+## A note on your data
 
-Install the packages listed in `requirements.txt`, set `GROQ_API_KEY` if AI answers are needed, then run `python app.py`. For production, use a WSGI server such as Gunicorn; Flask debug mode is off unless `FLASK_DEBUG=1` is explicitly set.
-
-The `/status` and `/health` endpoints only report that the Flask application is responding; they do not check DuckDuckGo or Groq availability. `robots.txt` gives crawler guidance only and does not restrict access to API routes.
+To show web results, our server sends your query to DuckDuckGo. If you request an AI overview, your question and up to four result snippets are sent to Groq. Search history and Ask conversations are stored in your browser, not in a Spectre account. Our hosting provider also handles requests; each provider follows its own privacy practices.
 
 ---
