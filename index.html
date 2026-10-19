@@ -278,7 +278,7 @@
       color: #85899b;
     }
 
-    /* Actual Spectre Search screenshot */
+    /* Search interface previews */
 
     .preview-wrap {
       position: relative;
@@ -306,6 +306,21 @@
       background: #fff;
       box-shadow: 0 26px 75px rgba(48, 46, 113, 0.13);
       transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .preview-shot {
+      margin: 0 0 28px;
+    }
+
+    .preview-shot:last-child {
+      margin-bottom: 0;
+    }
+
+    .preview-caption {
+      margin-top: 10px;
+      color: #85899b;
+      font-size: 12px;
+      text-align: center;
     }
 
     .search-screenshot:hover {
@@ -935,17 +950,30 @@
           </p>
         </div>
 
-        <!-- Your actual Spectre Search screenshot -->
+        <!-- Spectre Search theme previews -->
         <div class="preview-wrap">
           <div class="preview-glow"></div>
 
-          <img
-            class="search-screenshot"
-            src="/static/images/spectre-search-img.png"
-            alt="Screenshot of the Spectre Search engine interface"
-            loading="eager"
-            fetchpriority="high"
-          >
+          <figure class="preview-shot">
+            <img
+              class="search-screenshot"
+              src="static/images/spectre-search-img.png"
+              alt="Spectre Search homepage in light theme"
+              loading="eager"
+              fetchpriority="high"
+            >
+            <figcaption class="preview-caption">Light theme</figcaption>
+          </figure>
+
+          <figure class="preview-shot">
+            <img
+              class="search-screenshot"
+              src="static/images/spectre-search-img-dark.png"
+              alt="Spectre Search homepage in dark theme"
+              loading="lazy"
+            >
+            <figcaption class="preview-caption">Dark theme</figcaption>
+          </figure>
         </div>
       </div>
     </section>
@@ -1117,11 +1145,14 @@
               <h3>Privacy deserves a place in search.</h3>
               <p>
                 To show web results, our server sends your query to DuckDuckGo.
-                If you request an AI overview, your question and up to four
-                result snippets are sent to Groq. Search history and Ask
-                conversations are stored in your browser, not in a Spectre
-                account. Our hosting provider also handles requests; each
-                provider follows its own privacy practices.
+                You can turn off AI Overviews in Settings; searches will still
+                return web links, but your question and result snippets won't
+                be sent to Groq for an overview. When AI Overviews are on, your
+                question and up to four result snippets are sent to Groq.
+                Search history and Ask conversations are stored in your
+                browser, not in a Spectre account. Our hosting provider also
+                handles requests; each provider follows its own privacy
+                practices.
               </p>
             </div>
           </div>

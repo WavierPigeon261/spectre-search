@@ -21,6 +21,6 @@ Spectre Search is a lightweight, privacy-focused search tool designed to deliver
 
 ## A note on your data
 
-To show web results, our server sends your query to DuckDuckGo. If you request an AI overview, your question and up to four result snippets are sent to Groq. Search history and Ask conversations are stored in your browser, not in a Spectre account. Our hosting provider also handles requests; each provider follows its own privacy practices.
+To show web results, our server sends your query to DuckDuckGo. You can turn off AI Overviews in Settings; searches will still return web links, but your question and result snippets won't be sent to Groq for an overview. When AI Overviews are on, your question and up to four result snippets are sent to Groq. Search history and Ask conversations are stored in your browser, not in a Spectre account. Our hosting provider also handles requests; each provider follows its own privacy practices.
 
 ---
