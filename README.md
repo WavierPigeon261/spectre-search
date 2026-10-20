@@ -19,7 +19,7 @@ Spectre Search is a lightweight, privacy-focused search tool designed to deliver
 ![Spectre Search Light Theme Screenshot](static/images/spectre-search-img.png)  
 
 ## Dark Theme:
-![Spectre Search Light Theme Screenshot](static/images/spectre-search-img-da.png) 
+![Spectre Search Light Theme Screenshot](static/images/spectre-search-img-dark.png) 
 
 ---
 
