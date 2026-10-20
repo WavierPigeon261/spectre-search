@@ -4,7 +4,6 @@
 
  ### ***Search the web privately with no tracking.***
 
-</div>
 
 ---
 <!--![Service Down](https://img.shields.io/badge/service-down-red?style=for-the-badge) -->
@@ -12,6 +11,8 @@
 [![Spectre-Search](https://img.shields.io/badge/Click_to_open-Spectre_Search-blue?style=for-the-badge)](https://spectresearch.vercel.app)
 
 ![License](https://img.shields.io/badge/License-AGPL--V3.0-yellow?style=for-the-badge)
+
+</div>
 
 ---
 
