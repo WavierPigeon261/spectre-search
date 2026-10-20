@@ -1,4 +1,10 @@
-**Spectre Search - Search the web privately with no tracking.**
+<div align="center">
+  
+<img src="static/images/logo.png" width="65%" style="max-width: 200px;" alt="Spectre Search Logo">   
+
+ ### ***Search the web privately with no tracking.***
+
+</div>
 
 ---
 <!--![Service Down](https://img.shields.io/badge/service-down-red?style=for-the-badge) -->
